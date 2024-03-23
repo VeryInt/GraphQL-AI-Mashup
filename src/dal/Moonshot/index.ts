@@ -30,7 +30,7 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
     const API_KEY = apiKey || process?.env?.MOONSHOT_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return ''
+        return 'this is no messages or api key'
     }
     const { history } = convertMessages(messages)
     const openai = new OpenAI({
@@ -85,6 +85,7 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
             msg = result?.choices?.[0]?.message?.content || ''
         } catch (e) {
             console.log(`moonshot error`, e)
+            msg = String(e)
         }
 
         console.log(`Moonshot result`, msg)
