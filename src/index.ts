@@ -1,7 +1,17 @@
-import mainYoga from './main'
-import { createServer } from 'http'
+import { createYoga } from 'graphql-yoga'
+import { schema } from './schema'
+import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 
-const server = createServer(mainYoga)
-server.listen(4000, () => {
-    console.info('Server is running on http://localhost:4000/graphql')
+// vercel edge runtime
+export const runtime = 'edge'
+
+const { handleRequest } = createYoga({
+    schema,
+    graphqlEndpoint: '/',
+    context: {
+        // 在这里设置全局上下文信息
+    },
+    plugins: [useDeferStream()],
 })
+
+export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
