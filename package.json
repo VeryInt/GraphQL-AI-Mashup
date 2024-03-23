@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child --respawn src/main.ts",
     "start": "ts-node src/main.ts",
@@ -48,9 +49,12 @@
     "lint-staged": "^15.2.2",
     "pre-commit": "^1.2.2",
     "prettier": "^3.2.5",
+    "ts-loader": "^9.5.1",
     "ts-node": "10.9.2",
     "ts-node-dev": "2.0.0",
-    "typescript": "5.4.2"
+    "typescript": "5.4.2",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.19.0",
