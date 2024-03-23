@@ -10,7 +10,7 @@ const typeDefinitions = `
     input GeminiProArgs {
         appendPrompt: String
         "API_KEY"
-        key: String
+        apiKey: String
     }
 `
 
@@ -21,12 +21,11 @@ const resolvers = {
             const basePrompt = chatArgs.prompt || ''
             const geminiProArgs = args?.params || {}
             console.log(`parent in geminiPro`, parent)
-            const appendPrompt = geminiProArgs.appendPrompt || ''
+            const{ appendPrompt, apiKey } = geminiProArgs || {}
 
             const prompt = `${basePrompt} ${appendPrompt}`
-
-            // const text = await runChat(basePrompt)
-            const text: any = await (await GeminiProDal.loader(context, { prompt: basePrompt })).load('all')
+            const key = prompt
+            const text: any = await (await GeminiProDal.loader(context, { prompt, apiKey }, key)).load(key)
             return { text }
         },
     },

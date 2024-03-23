@@ -1,11 +1,9 @@
 import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { GeminiProArgs } from './type'
+import { IGeminiProArgs } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 
-const MODEL_NAME = 'gemini-1.0-pro'
-const genAI = new GoogleGenerativeAI(process?.env?.GEMINI_PRO_API_KEY || '')
-const model = genAI.getGenerativeModel({ model: MODEL_NAME })
+const DEFAULT_MODEL_NAME = 'gemini-1.0-pro'
 const generationConfig = {
     temperature: 0.9,
     topK: 1,
@@ -32,37 +30,51 @@ const safetySettings = [
 ]
 
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
+
+    const { prompt, apiKey, model: modelName } = params || {}
+    const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
+    if (!prompt || !API_KEY) {
+        return ''
+    }
+
+    const genAI = new GoogleGenerativeAI(API_KEY)
+    const model = genAI.getGenerativeModel({ model: modelName || DEFAULT_MODEL_NAME })
     const chat = model.startChat({
         generationConfig,
         safetySettings,
         history: [],
     })
-    const prompt = params.prompt || ``
-    if (!prompt) {
-        return ''
-    }
+
     const result = await chat.sendMessage(prompt)
     const response = result.response
     console.log(response.text())
     return response.text()
 }
 
-const loaderGeminiPro = async (ctx: TBaseContext, args: GeminiProArgs) => {
-    let loader = new DataLoader<string, string>(async keys => {
-        console.log(`loaderGeminiPro-${keys}-🐹🐹🐹`)
-        try {
-            const params = {
-                ...args,
-            }
-            const answerText = await fetchGeminiPro(ctx, params)
-            return new Array(keys.length || 1).fill(answerText)
-        } catch (e) {
-            console.log(`[loaderGeminiPro] error: ${e}`)
-        }
-        return new Array(keys.length || 1).fill({ status: false })
-    })
+const loaderGeminiPro = async (ctx: TBaseContext, args: IGeminiProArgs, key: string) => {
+    ctx.loaderGeminiProArgs = {
+        ...ctx.loaderGeminiProArgs,
+        [key]: args,
+    }
 
-    return loader
+    if (!ctx?.loaderGeminiPro) {
+        ctx.loaderGeminiPro = new DataLoader<string, string>(async keys => {
+            console.log(`loaderGeminiPro-keys-🐹🐹🐹`, keys)
+            try {
+                const geminiProAnswerList = await Promise.all(
+                    keys.map(key =>
+                        fetchGeminiPro(ctx, {
+                            ...ctx.loaderGeminiProArgs[key],
+                        })
+                    ))
+                return geminiProAnswerList
+            } catch (e) {
+                console.log(`[loaderGeminiPro] error: ${e}`)
+            }
+            return new Array(keys.length || 1).fill({ status: false })
+        })
+    }
+    return ctx.loaderGeminiPro
 }
 
 export default { fetch: fetchGeminiPro, loader: loaderGeminiPro }
