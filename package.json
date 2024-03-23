@@ -24,8 +24,16 @@
       "git add"
     ]
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["ai", "graphql"],
+  "author": "Erik <erikloo310@gmail.com>",
+  "repository": {
+      "type": "git",
+      "url": "git+https://github.com/VeryInt/GraphQL-AI-Mashup.git"
+  },
+  "bugs": {
+      "url": "https://github.com/VeryInt/GraphQL-AI-Mashup/issues"
+  },
+  "homepage": "https://github.com/VeryInt/GraphQL-AI-Mashup#readme",
   "license": "ISC",
   "devDependencies": {
     "@types/lodash": "^4.17.0",
