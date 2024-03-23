@@ -14,4 +14,7 @@ export interface IGeminiProArgs {
     messages?: IMessage[]
     model?: string
     apiKey?: string
+    isStream?: boolean
+    completeHandler?: (params: { content: string; status: boolean }) => void
+    streamHanler?: (params: { token: string; status: boolean }) => void
 }

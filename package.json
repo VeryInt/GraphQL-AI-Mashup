@@ -24,14 +24,17 @@
       "git add"
     ]
   },
-  "keywords": ["ai", "graphql"],
+  "keywords": [
+    "ai",
+    "graphql"
+  ],
   "author": "Erik <erikloo310@gmail.com>",
   "repository": {
-      "type": "git",
-      "url": "git+https://github.com/VeryInt/GraphQL-AI-Mashup.git"
+    "type": "git",
+    "url": "git+https://github.com/VeryInt/GraphQL-AI-Mashup.git"
   },
   "bugs": {
-      "url": "https://github.com/VeryInt/GraphQL-AI-Mashup/issues"
+    "url": "https://github.com/VeryInt/GraphQL-AI-Mashup/issues"
   },
   "homepage": "https://github.com/VeryInt/GraphQL-AI-Mashup#readme",
   "license": "ISC",
@@ -52,6 +55,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.3.1",
     "@graphql-tools/schema": "^10.0.3",
+    "@graphql-yoga/plugin-defer-stream": "^3.2.0",
     "dataloader": "^2.2.2",
     "dotenv": "^16.4.5",
     "graphql": "^16.8.1",
