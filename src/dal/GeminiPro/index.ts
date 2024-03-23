@@ -1,4 +1,4 @@
-import 'dotenv/config'
+// import 'dotenv/config'
 import DataLoader from 'dataloader'
 import { ICommonDalArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'

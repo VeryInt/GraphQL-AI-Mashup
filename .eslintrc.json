@@ -12,5 +12,6 @@
         "@typescript-eslint"
     ],
     "rules": {
+        "react-hooks/rules-of-hooks": "off"
     }
 }

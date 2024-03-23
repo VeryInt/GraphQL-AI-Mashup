@@ -1,4 +1,4 @@
-import 'dotenv/config'
+// import 'dotenv/config'
 import MoonshotDal from '../../dal/Moonshot'
 import _ from 'lodash'
 import { Repeater } from 'graphql-yoga'

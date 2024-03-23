@@ -1,4 +1,4 @@
-import 'dotenv/config'
+// import 'dotenv/config'
 import GeminiProDal from '../../dal/GeminiPro'
 import _ from 'lodash'
 import { Repeater } from 'graphql-yoga'
