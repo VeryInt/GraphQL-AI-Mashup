@@ -35,7 +35,7 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
     const API_KEY = apiKey || process?.env?.CLAUDE_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return 'this is no messages or api key of Claude'
+        return 'there is no messages or api key of Claude'
     }
     const { history } = convertMessages(messages)
     const anthropic = new Anthropic({

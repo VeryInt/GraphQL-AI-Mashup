@@ -56,7 +56,7 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return 'this is no messages or api key of Claude of GeminiPro'
+        return 'there is no messages or api key of Claude of GeminiPro'
     }
 
     const { message, history } = convertMessages(messages)
