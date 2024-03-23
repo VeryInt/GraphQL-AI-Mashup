@@ -56,7 +56,7 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return ''
+        return 'this is no messages or api key of Claude of GeminiPro'
     }
 
     const { message, history } = convertMessages(messages)
@@ -77,18 +77,27 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
         let text = ''
         for await (const chunk of streamResult.stream) {
             const chunkText = chunk.text()
-            streamHanler({
-                token: chunkText,
-                status: true,
-            })
-            text += chunkText
+            if (chunkText) {
+                streamHanler({
+                    token: chunkText,
+                    status: true,
+                })
+                text += chunkText
+            }
         }
         completeHandler && completeHandler({ content: text, status: true })
     } else {
-        const result = await chat.sendMessage(message)
-        const response = result.response
-        console.log(response.text())
-        return response.text()
+        let msg = ''
+        try {
+            const result = await chat.sendMessage(message)
+            const response = result.response
+            console.log(response.text())
+            msg = response.text()
+        } catch (e) {
+            msg = String(e)
+        }
+
+        return msg
     }
 }
 

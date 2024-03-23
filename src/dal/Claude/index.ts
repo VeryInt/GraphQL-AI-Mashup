@@ -35,7 +35,7 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
     const API_KEY = apiKey || process?.env?.CLAUDE_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return ''
+        return 'this is no messages or api key of Claude'
     }
     const { history } = convertMessages(messages)
     const anthropic = new Anthropic({
@@ -52,17 +52,19 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
             })
             .on('text', text => {
                 console.log(`claude text`, text)
-                streamHanler({
-                    status: true,
-                    token: text,
-                })
+                text &&
+                    streamHanler({
+                        status: true,
+                        token: text,
+                    })
             })
             .on('message', message => {
                 console.log(`claude message`, message)
-                completeHandler({
-                    content: message,
-                    status: true,
-                })
+                message &&
+                    completeHandler({
+                        content: message,
+                        status: true,
+                    })
             })
             .off('error', error => {
                 console.log(`claude off`, error)
@@ -82,7 +84,9 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
                 messages: history,
             })
             msg = result?.role == Roles.assistant ? result?.content?.[0]?.text || '' : ''
-        } catch (e) {}
+        } catch (e) {
+            msg = String(e)
+        }
 
         console.log(`claude result`, msg)
         return msg

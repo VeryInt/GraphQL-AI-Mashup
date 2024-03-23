@@ -30,7 +30,7 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
     const API_KEY = apiKey || process?.env?.MOONSHOT_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return 'this is no messages or api key'
+        return 'this is no messages or api key of Moonshot'
     }
     const { history } = convertMessages(messages)
     const openai = new OpenAI({
@@ -54,11 +54,14 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
             let content = ``
             for await (const chunk of completion) {
                 const text = chunk.choices[0].delta.content
-                streamHanler({
-                    token: text,
-                    status: true,
-                })
-                content += text
+                console.log(`Moonshot text`, text)
+                if (text) {
+                    streamHanler({
+                        token: text,
+                        status: true,
+                    })
+                    content += text
+                }
             }
             completeHandler({
                 content: content,
