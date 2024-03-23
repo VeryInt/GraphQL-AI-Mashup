@@ -4,7 +4,7 @@ import { schema } from './schema'
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 
 // vercel edge runtime
-export const runtime = 'edge'
+// export const runtime = 'edge'
 
 function main() {
     const yoga = createYoga({
@@ -23,4 +23,4 @@ function main() {
 
 main()
 
-export default main
+// export default main
