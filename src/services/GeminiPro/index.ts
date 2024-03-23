@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import GeminiProDal from '../../dal/GeminiPro'
+import _ from 'lodash'
 
 const typeDefinitions = `
     scalar JSON
@@ -8,7 +9,7 @@ const typeDefinitions = `
     }
 
     input GeminiProArgs {
-        appendPrompt: String
+        messages: Message
         "API_KEY"
         apiKey: String
     }
@@ -18,14 +19,16 @@ const resolvers = {
     Chat: {
         GeminiPro: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
             const chatArgs = parent?.chatArgs || {}
-            const basePrompt = chatArgs.prompt || ''
+            const baseMessages = chatArgs.messages || []
             const geminiProArgs = args?.params || {}
-            console.log(`parent in geminiPro`, parent)
-            const { appendPrompt, apiKey } = geminiProArgs || {}
-
-            const prompt = `${basePrompt} ${appendPrompt}`
-            const key = prompt
-            const text: any = await (await GeminiProDal.loader(context, { prompt, apiKey }, key)).load(key)
+            const { messages: appendMessages, apiKey } = geminiProArgs || {}
+            const messages = _.concat([], baseMessages || [], appendMessages || []) || []
+            const key = messages.at(-1)?.content
+            console.log(`key`, key)
+            if (!key) {
+                return { text: '' }
+            }
+            const text: any = await (await GeminiProDal.loader(context, { messages, apiKey }, key)).load(key)
             return { text }
         },
     },

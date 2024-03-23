@@ -1,7 +1,7 @@
 const typeDefinitions = `
     scalar JSON
     type Query {
-        chat(params: ChatArgs!): Chat
+        chat(params: ChatArgs): Chat
     }
 
     type Chat {
@@ -11,9 +11,14 @@ const typeDefinitions = `
         text: String!
     }
 
+    input Message {
+        role: String!
+        content: String!
+    }
+
     input ChatArgs {
         "提问内容"
-        prompt: String
+        messages: [Message]
     }
 `
 

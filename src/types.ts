@@ -1,7 +1,8 @@
-enum Roles {
+export enum Roles {
     system = 'system',
     user = 'user',
-    assistant = 'assistant',
+    assistant = 'assistant', // Openai
+    model = 'model', // GeminiPro
 }
 
 interface IMessage {
@@ -10,7 +11,6 @@ interface IMessage {
 }
 
 export interface IGeminiProArgs {
-    prompt: string
     messages?: IMessage[]
     model?: string
     apiKey?: string

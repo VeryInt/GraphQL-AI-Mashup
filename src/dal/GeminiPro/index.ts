@@ -1,7 +1,8 @@
 import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { IGeminiProArgs } from '../../types'
+import { IGeminiProArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
+import _ from 'lodash'
 
 const DEFAULT_MODEL_NAME = 'gemini-1.0-pro'
 const generationConfig = {
@@ -29,22 +30,46 @@ const safetySettings = [
     },
 ]
 
+const convertMessages = (messages: IGeminiProArgs['messages']) => {
+    let history = _.map(messages, message => {
+        return {
+            role:
+                message.role == Roles.assistant
+                    ? Roles.model
+                    : message.role == Roles.system
+                      ? Roles.model
+                      : message.role,
+            parts: [{ text: message.content }],
+        }
+    })
+
+    history.splice(-1)
+    let message = messages?.at(-1)?.content
+    return {
+        history: history,
+        message,
+    }
+}
+
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { prompt, apiKey, model: modelName } = params || {}
+    const { messages, apiKey, model: modelName } = params || {}
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
-    if (!prompt || !API_KEY) {
+    if (_.isEmpty(messages) || !API_KEY) {
         return ''
     }
 
+    const { message, history } = convertMessages(messages)
     const genAI = new GoogleGenerativeAI(API_KEY)
     const model = genAI.getGenerativeModel({ model: modelName || DEFAULT_MODEL_NAME })
     const chat = model.startChat({
         generationConfig,
         safetySettings,
-        history: [],
+        history: history,
     })
 
-    const result = await chat.sendMessage(prompt)
+    if (!message) return ''
+
+    const result = await chat.sendMessage(message)
     const response = result.response
     console.log(response.text())
     return response.text()
