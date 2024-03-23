@@ -1,6 +1,6 @@
 import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { IGeminiProArgs, Roles } from '../../types'
+import { ICommonDalArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import _ from 'lodash'
 
@@ -30,7 +30,7 @@ const safetySettings = [
     },
 ]
 
-const convertMessages = (messages: IGeminiProArgs['messages']) => {
+const convertMessages = (messages: ICommonDalArgs['messages']) => {
     let history = _.map(messages, message => {
         return {
             role:
@@ -54,13 +54,14 @@ const convertMessages = (messages: IGeminiProArgs['messages']) => {
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
     const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler } = params || {}
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
+    const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
         return ''
     }
 
     const { message, history } = convertMessages(messages)
     const genAI = new GoogleGenerativeAI(API_KEY)
-    const model = genAI.getGenerativeModel({ model: modelName || DEFAULT_MODEL_NAME })
+    const model = genAI.getGenerativeModel({ model: modelUse })
     const chat = model.startChat({
         generationConfig,
         safetySettings,
@@ -91,7 +92,7 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
     }
 }
 
-const loaderGeminiPro = async (ctx: TBaseContext, args: IGeminiProArgs, key: string) => {
+const loaderGeminiPro = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) => {
     ctx.loaderGeminiProArgs = {
         ...ctx.loaderGeminiProArgs,
         [key]: args,

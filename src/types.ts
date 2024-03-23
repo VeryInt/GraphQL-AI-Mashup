@@ -10,7 +10,7 @@ interface IMessage {
     content: string
 }
 
-export interface IGeminiProArgs {
+export interface ICommonDalArgs {
     messages?: IMessage[]
     model?: string
     apiKey?: string
