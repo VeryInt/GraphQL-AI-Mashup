@@ -30,7 +30,6 @@ const safetySettings = [
 ]
 
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-
     const { prompt, apiKey, model: modelName } = params || {}
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
     if (!prompt || !API_KEY) {
@@ -66,7 +65,8 @@ const loaderGeminiPro = async (ctx: TBaseContext, args: IGeminiProArgs, key: str
                         fetchGeminiPro(ctx, {
                             ...ctx.loaderGeminiProArgs[key],
                         })
-                    ))
+                    )
+                )
                 return geminiProAnswerList
             } catch (e) {
                 console.log(`[loaderGeminiPro] error: ${e}`)

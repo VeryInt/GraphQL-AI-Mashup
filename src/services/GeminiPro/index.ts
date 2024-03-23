@@ -21,7 +21,7 @@ const resolvers = {
             const basePrompt = chatArgs.prompt || ''
             const geminiProArgs = args?.params || {}
             console.log(`parent in geminiPro`, parent)
-            const{ appendPrompt, apiKey } = geminiProArgs || {}
+            const { appendPrompt, apiKey } = geminiProArgs || {}
 
             const prompt = `${basePrompt} ${appendPrompt}`
             const key = prompt
