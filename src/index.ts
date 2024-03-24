@@ -12,10 +12,11 @@ const { handleRequest } = createYoga({
         // 在这里设置全局上下文信息
     },
     plugins: [useDeferStream()],
+    fetchAPI: { Response },
 })
 
-export default async (req: any, res: any) => {
-    return await handleRequest(req, res)
-}
+// export default async (req: any, res: any) => {
+//     return await handleRequest(req, res)
+// }
 
-// export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
+export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
