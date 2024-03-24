@@ -15,7 +15,7 @@ const { handleRequest } = createYoga({
 })
 
 export default async (req: any, res: any) => {
-    return handleRequest(req, res)
+    return await handleRequest(req, res)
 }
 
 // export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
