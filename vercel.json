@@ -2,8 +2,10 @@
   "version": 2,
   "functions": {
     "src/index.ts": {
+      "memory": 3009
     },
     "dist/index.js": {
+      "memory": 3009
     }
   },
   "routes": [
