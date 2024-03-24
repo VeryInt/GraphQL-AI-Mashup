@@ -4,7 +4,7 @@ import { ICommonDalArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import _ from 'lodash'
 
-const DEFAULT_MODEL_NAME = 'gemini-1.0-pro'
+const DEFAULT_MODEL_NAME = 'gemini-1.0-pro-latest'
 const generationConfig = {
     temperature: 0.9,
     topK: 1,
