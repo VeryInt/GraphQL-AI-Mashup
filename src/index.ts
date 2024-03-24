@@ -14,4 +14,8 @@ const { handleRequest } = createYoga({
     plugins: [useDeferStream()],
 })
 
-export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
+export default async (req: any, res: any) => {
+    return handleRequest(req, res)
+}
+
+// export { handleRequest as GET, handleRequest as POST, handleRequest as OPTIONS }
