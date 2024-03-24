@@ -1,9 +1,20 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@vercel/node"
+    }
+  ],
+  "functions": {
+    "src/index.ts": {
+      "runtime": "edge"
+    }
+  },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/index.ts"
+      "dest": "dist/index.js"
     }
   ]
 }
