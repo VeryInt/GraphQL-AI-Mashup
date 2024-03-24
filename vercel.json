@@ -2,10 +2,12 @@
   "version": 2,
   "functions": {
     "src/index.ts": {
-      "runtime": "edge"
+      "memory": 3009,
+      "maxDuration": 30
     },
     "dist/index.js": {
-      "runtime": "edge"
+      "memory": 3009,
+      "maxDuration": 30
     }
   },
   "routes": [
