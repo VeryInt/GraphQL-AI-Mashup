@@ -2,8 +2,15 @@ import { createYoga } from 'graphql-yoga'
 import { schema } from './schema'
 import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
 
-// vercel edge runtime
-// export const runtime = 'edge'
+/**
+ * vercel edge runtime
+ * finally it works!!
+ * use config and set runtime!!
+ * do not set runtime as export directly
+ * ==========> export const runtime = 'edge'
+ * ==========> 👆 it doesn't work for deploying yoga-server in Vercel,
+ * ==========> 👆 but it works for yoga as an api in nextjs!!!
+ */
 export const config = {
     runtime: 'edge',
 }
