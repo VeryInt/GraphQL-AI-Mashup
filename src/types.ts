@@ -5,7 +5,7 @@ export enum Roles {
     model = 'model', // GeminiPro
 }
 
-interface IMessage {
+export interface IMessage {
     role: Roles
     content: string
 }

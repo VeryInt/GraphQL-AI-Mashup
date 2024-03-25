@@ -3,6 +3,7 @@ import DataLoader from 'dataloader'
 import { ICommonDalArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import _ from 'lodash'
+import { mergeMessages } from '../../utils/tools'
 
 const DEFAULT_MODEL_NAME = 'gemini-1.0-pro-latest'
 const generationConfig = {
@@ -31,7 +32,7 @@ const safetySettings = [
 ]
 
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
-    let history = _.map(messages, message => {
+    let history = _.map(mergeMessages(messages), message => {
         return {
             role:
                 message.role == Roles.assistant
