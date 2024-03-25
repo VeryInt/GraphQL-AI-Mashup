@@ -32,7 +32,8 @@ const safetySettings = [
 ]
 
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
-    let history = _.map(mergeMessages(messages), message => {
+    const mergedMessages = mergeMessages(messages)
+    let history = _.map(mergedMessages, message => {
         return {
             role:
                 message.role == Roles.assistant
@@ -45,7 +46,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
     })
 
     history.splice(-1)
-    let message = messages?.at(-1)?.content
+    let message = mergedMessages?.at(-1)?.content
     return {
         history: history,
         message,
