@@ -11,12 +11,13 @@ GraphQL-AI-Mashup is an application that integrates various types of AI interfac
 - Can be deployed to Vercel with a single click
 
 ### AI Support List
-|AI||
-|--|--|
-|OpenAI||
-|GeminiPro||
-|Claude||
-|Moonshot||
+|AI|Default Model|Documentation|
+|--|--|--|
+|OpenAI|gpt-3.5-turbo|[Openai Models](https://platform.openai.com/docs/models)|
+|GeminiPro|gemini-1.0-pro-latest|[GeminiPro Models](https://ai.google.dev/models/gemini)|
+|Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|
+|Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
+|Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
 
 ## Getting Started
 ### Install Dependencies

@@ -9,12 +9,13 @@ GraphQL-AI-Mashup 是一个集成各种类型 AI 接口的应用程序,通过 Gr
 - 可一键部署到 Vercel
 
 ### AI支持列表
-|AI||
-|--|--|
-|OpenAI||
-|GeminiPro||
-|Claude||
-|Moonshot||
+|AI|默认模型|文档|
+|--|--|--|
+|OpenAI|gpt-3.5-turbo|[Openai Models](https://platform.openai.com/docs/models)|
+|GeminiPro|gemini-1.0-pro-latest|[GeminiPro Models](https://ai.google.dev/models/gemini)|
+|Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|
+|Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
+|Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
 
 ## 快速开始
 ### 安装依赖
