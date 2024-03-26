@@ -14,6 +14,8 @@ const typeDefinitions = `
         messages: Message
         "API_KEY"
         apiKey: String
+        "Model Name"
+        model: String
     }
 `
 
