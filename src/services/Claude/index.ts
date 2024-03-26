@@ -25,14 +25,14 @@ const resolvers = {
             const chatArgs = parent?.chatArgs || {}
             const baseMessages = chatArgs.messages || []
             const claudeArgs = args?.params || {}
-            const { messages: appendMessages, apiKey } = claudeArgs || {}
+            const { messages: appendMessages, apiKey, model } = claudeArgs || {}
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
             if (!key) {
                 return { text: '' }
             }
-            const text: any = await (await ClaudeDal.loader(context, { messages, apiKey }, key)).load(key)
+            const text: any = await (await ClaudeDal.loader(context, { messages, apiKey, model }, key)).load(key)
             return { text }
         },
         ClaudeStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
@@ -40,7 +40,7 @@ const resolvers = {
                 const chatArgs = parent?.chatArgs || {}
                 const baseMessages = chatArgs.messages || []
                 const claudeArgs = args?.params || {}
-                const { messages: appendMessages, apiKey } = claudeArgs || {}
+                const { messages: appendMessages, apiKey, model } = claudeArgs || {}
                 const messages = _.concat([], baseMessages || [], appendMessages || []) || []
                 const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -50,6 +50,7 @@ const resolvers = {
                         {
                             messages,
                             apiKey,
+                            model,
                             isStream: true,
                             completeHandler: ({ content, status }) => {
                                 stop()
