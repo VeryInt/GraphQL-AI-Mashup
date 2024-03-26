@@ -1,19 +1,74 @@
-import OpenAI from 'openai'
+// import 'dotenv/config'
+import OpenaiDal from '../../dal/Openai'
+import _ from 'lodash'
+import { Repeater } from 'graphql-yoga'
 
-const openai = new OpenAI()
+const typeDefinitions = `
+    scalar JSON
+    type Chat {
+        Openai(params: OpenaiArgs): ChatResult
+        OpenaiStream(params: OpenaiArgs): [String]
+    }
 
-const resolversx = async () => {
-    const completion = await openai.chat.completions.create({
-        messages: [{ role: 'system', content: 'You are a helpful assistant.' }],
-        model: 'gpt-3.5-turbo',
-    })
+    input OpenaiArgs {
+        messages: Message
+        "API_KEY"
+        apiKey: String
+        "Model Name"
+        model: String
+    }
+`
 
-    console.log(completion.choices[0])
+const resolvers = {
+    Chat: {
+        Openai: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
+            const chatArgs = parent?.chatArgs || {}
+            const baseMessages = chatArgs.messages || []
+            const openaiArgs = args?.params || {}
+            const { messages: appendMessages, apiKey, model } = openaiArgs || {}
+            const messages = _.concat([], baseMessages || [], appendMessages || []) || []
+            const key = messages.at(-1)?.content
+            console.log(`key`, key)
+            if (!key) {
+                return { text: '' }
+            }
+            const text: any = await (await OpenaiDal.loader(context, { messages, apiKey, model }, key)).load(key)
+            return { text }
+        },
+        OpenaiStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
+            const xvalue = new Repeater<String>(async (push, stop) => {
+                const chatArgs = parent?.chatArgs || {}
+                const baseMessages = chatArgs.messages || []
+                const openaiArgs = args?.params || {}
+                const { messages: appendMessages, apiKey, model } = openaiArgs || {}
+                const messages = _.concat([], baseMessages || [], appendMessages || []) || []
+                const key = `${messages.at(-1)?.content || ''}_stream`
+
+                await (
+                    await OpenaiDal.loader(
+                        context,
+                        {
+                            messages,
+                            apiKey,
+                            model,
+                            isStream: true,
+                            completeHandler: ({ content, status }) => {
+                                stop()
+                            },
+                            streamHanler: ({ token, status }) => {
+                                if (token && status) {
+                                    push(token)
+                                }
+                            },
+                        },
+                        key
+                    )
+                ).load(key)
+            })
+            return xvalue
+        },
+    },
 }
-
-const typeDefinitions = {}
-
-const resolvers = {}
 
 export default {
     typeDefinitions,

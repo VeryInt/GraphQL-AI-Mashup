@@ -3,8 +3,9 @@ import ChatCommon from './ChatCommon'
 import GeminiPro from './GeminiPro'
 import Claude from './Claude'
 import Moonshot from './Moonshot'
+import Openai from './Openai'
 
-const serviceList = [ChatCommon, GeminiPro, Claude, Moonshot]
+const serviceList = [ChatCommon, Openai, GeminiPro, Claude, Moonshot]
 
 export default {
     typeDefinitions: serviceList.map(service => service.typeDefinitions),
