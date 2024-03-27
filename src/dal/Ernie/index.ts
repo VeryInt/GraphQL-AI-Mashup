@@ -1,7 +1,6 @@
 // import 'dotenv/config'
 import DataLoader from 'dataloader'
 import { IErnieDalArgs, Roles } from '../../types'
-import OpenAI from 'openai'
 import _ from 'lodash'
 const qs = require('qs')
 
@@ -70,10 +69,6 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
     const url = `https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${modelUse}?access_token=${accessToken}`
 
     const { history } = convertMessages(messages)
-    const openai = new OpenAI({
-        baseURL: baseUrl,
-        apiKey: API_KEY,
-    })
 
     const body = {
         messages: history,
@@ -83,6 +78,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
     console.log(`isStream`, isStream)
 
     if (isStream) {
+        console.log(`this is in baidu stream`)
         streamHanler({
             token: `currently stream mode is not supported`,
             status: false,
