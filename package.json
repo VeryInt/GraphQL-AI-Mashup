@@ -5,9 +5,11 @@
   "main": "index.ts",
   "scripts": {
     "build": "webpack",
+    "dockerbuild": "webpack --entry ./src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child --respawn src/main.ts",
     "start": "node -r ts-node/register --env-file=.env src/main.ts",
+    "dockerstart": "node --env-file=.env dist/index.js",
     "eslint": "./node_modules/.bin/eslint \"src/**/*.{js,jsx,ts,tsx}\" --ignore-pattern \"src/lib/\" --ignore-pattern \"src/shared/\"",
     "check-types": "tsc --noemit",
     "eslint:commit": "git diff --cached --name-only | grep -E 'src.*\\.[jt]sx?$' | xargs ./node_modules/.bin/eslint --quiet",

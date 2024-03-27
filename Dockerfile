@@ -10,17 +10,13 @@ ENV NODE_ENV="production"
 # Throw-away build stage to reduce size of final image
 FROM base AS build
 
-# Install packages needed to build node modules
-#RUN apt-get update && apt-get install -y
-
 # Install node modules
 COPY package*.json ./
 RUN npm install --include=dev
 
-COPY ./ ./
-
 # Build application
-RUN npm run build
+COPY ./ ./
+RUN npm run dockerbuild
 
 # Remove development dependencies
 RUN npm prune --omit=dev
@@ -32,5 +28,5 @@ FROM base
 COPY --from=build /app /app
 
 # Start the server by default, this can be overwritten at runtime
-#EXPOSE 4000
-#CMD [ "npm", "run", "startprod" ]
+EXPOSE 4000
+CMD [ "npm", "run", "dockerstart" ]

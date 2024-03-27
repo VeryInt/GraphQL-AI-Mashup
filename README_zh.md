@@ -39,6 +39,29 @@ npm run start
 ### 本地访问
 http://localhost:4000/
 
+## Docker
+本项目也可通过 docker 部署，项目已经自带 Dockerfile 。
+
+### 设置API KEY环境变量
+```bash
+cp .env.example .env
+```
+修改 ```.env```中的各个API KEY
+
+### Docker Image Build
+```bash
+docker build -t graphql-ai-mashup .    
+```
+
+### Docker Run
+```bash
+docker run -dp 4000:4000 graphql-ai-mashup
+```
+
+### 本地访问
+http://localhost:4000/
+
+
 ## 部署
 ### Vercel
 本项目可以一键部署到 Vercel。点击下方按钮即可开始部署:

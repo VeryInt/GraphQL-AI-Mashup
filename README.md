@@ -41,6 +41,31 @@ npm run start
 ### Local Access
 http://localhost:4000/
 
+
+## Docker
+This project can be deployed via docker, and it comes with its own Dockerfile.
+
+### Set API Key Environment Variables
+```bash
+cp .env.example .env
+```
+Modify the API keys in the ```.env``` file.
+
+### Docker Image Build
+```bash
+docker build -t graphql-ai-mashup .    
+```
+
+### Docker Run
+```bash
+docker run -dp 4000:4000 graphql-ai-mashup
+```
+
+### Local Access
+http://localhost:4000/
+
+
+
 ## Deployment
 ### Vercel
 This project can be deployed to Vercel with a single click. Click the button below to start the deployment:
