@@ -95,6 +95,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         let msg = ''
         try {
             const response = await fetch(url, {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
