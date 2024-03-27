@@ -16,6 +16,8 @@ const typeDefinitions = `
         apiKey: String
         "Model Name"
         model: String
+        "API Version"
+        apiVersion: String
     }
 `
 
@@ -25,14 +27,16 @@ const resolvers = {
             const chatArgs = parent?.chatArgs || {}
             const baseMessages = chatArgs.messages || []
             const geminiProArgs = args?.params || {}
-            const { messages: appendMessages, apiKey, model } = geminiProArgs || {}
+            const { messages: appendMessages, apiKey, model, apiVersion } = geminiProArgs || {}
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
             if (!key) {
                 return { text: '' }
             }
-            const text: any = await (await GeminiProDal.loader(context, { messages, apiKey, model }, key)).load(key)
+            const text: any = await (
+                await GeminiProDal.loader(context, { messages, apiKey, model, apiVersion }, key)
+            ).load(key)
             return { text }
         },
         GeminiProStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
@@ -40,7 +44,7 @@ const resolvers = {
                 const chatArgs = parent?.chatArgs || {}
                 const baseMessages = chatArgs.messages || []
                 const geminiProArgs = args?.params || {}
-                const { messages: appendMessages, apiKey, model } = geminiProArgs || {}
+                const { messages: appendMessages, apiKey, model, apiVersion } = geminiProArgs || {}
                 const messages = _.concat([], baseMessages || [], appendMessages || []) || []
                 const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -51,6 +55,7 @@ const resolvers = {
                             messages,
                             apiKey,
                             model,
+                            apiVersion,
                             isStream: true,
                             completeHandler: ({ content, status }) => {
                                 stop()

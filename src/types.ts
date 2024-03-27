@@ -19,6 +19,9 @@ export interface ICommonDalArgs {
     streamHanler?: (params: { token: string; status: boolean }) => void
 }
 
+export interface IGeminiProDalArgs extends ICommonDalArgs {
+    apiVersion?: string
+}
 export interface IErnieDalArgs extends ICommonDalArgs {
     secretKey?: string
 }
