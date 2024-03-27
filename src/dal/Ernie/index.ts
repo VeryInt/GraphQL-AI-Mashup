@@ -4,6 +4,8 @@ import { IErnieDalArgs, Roles } from '../../types'
 import _ from 'lodash'
 const qs = require('qs')
 
+const defaultErrorInfo = `currently the mode is not supported`
+
 const DEFAULT_MODEL_NAME = 'ernie-3.5-4k-0205'
 const baseHost = 'https://aip.baidubce.com'
 const generationConfig = {
@@ -80,7 +82,6 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
     console.log(`isStream`, isStream)
 
     if (isStream) {
-        let msg = ''
         try {
             body.stream = true
             const response: Record<string, any> = await fetch(url, {
@@ -119,17 +120,26 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
                     status: true,
                 })
             } else {
-                console.error('Error fetching events:', response.status)
+                const errorMsg = 'Error fetching events:' + response.status
+                console.error(errorMsg)
+                streamHanler({
+                    token: errorMsg || defaultErrorInfo,
+                    status: true,
+                })
+                completeHandler({
+                    content: errorMsg || defaultErrorInfo,
+                    status: false,
+                })
             }
         } catch (e) {
             console.log(`ernie error`, e)
-            msg = String(e)
+            let errorMsg = String(e)
             streamHanler({
-                token: msg || `currently stream mode is not supported`,
+                token: errorMsg || defaultErrorInfo,
                 status: true,
             })
             completeHandler({
-                content: msg || `currently stream mode is not supported`,
+                content: errorMsg || defaultErrorInfo,
                 status: false,
             })
         }
