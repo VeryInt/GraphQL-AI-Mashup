@@ -5,7 +5,7 @@ import _ from 'lodash'
 const qs = require('qs')
 
 const DEFAULT_MODEL_NAME = 'ernie-3.5-4k-0205'
-const baseUrl = 'https://api.ernie.cn/v1'
+const baseHost = 'https://aip.baidubce.com'
 const generationConfig = {
     temperature: 0.9,
     topK: 1,
@@ -31,7 +31,7 @@ const getAccessToken = async ({ apiKey, secretKey }: { apiKey?: string; secretKe
     apiKey = apiKey || process?.env?.ERNIE_API_KEY || ''
     if (!secretKey || !apiKey) return ''
 
-    let url = `https://aip.baidubce.com/oauth/2.0/token?`
+    let url = `${baseHost}/oauth/2.0/token?`
     const query = {
         grant_type: `client_credentials`,
         client_id: apiKey,
@@ -66,7 +66,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         secretKey: SECRET_KEY,
     })
 
-    const url = `https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${modelUse}?access_token=${accessToken}`
+    const url = `${baseHost}/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${modelUse}?access_token=${accessToken}`
 
     const { history } = convertMessages(messages)
 
@@ -81,7 +81,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         console.log(`this is in baidu stream`)
         streamHanler({
             token: `currently stream mode is not supported`,
-            status: false,
+            status: true,
         })
         completeHandler({
             content: `currently stream mode is not supported`,
