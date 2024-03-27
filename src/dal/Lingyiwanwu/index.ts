@@ -4,7 +4,8 @@ import { ICommonDalArgs, Roles } from '../../types'
 import OpenAI from 'openai'
 import _ from 'lodash'
 
-const DEFAULT_MODEL_NAME = 'gpt-3.5-turbo'
+const DEFAULT_MODEL_NAME = 'yi-34b-chat-0205'
+const baseUrl = 'https://api.lingyiwanwu.com/v1'
 const generationConfig = {
     temperature: 0.9,
     topK: 1,
@@ -24,23 +25,24 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
     }
 }
 
-const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
+const fetchLingyiwanwu = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
     const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler } = params || {}
-    const API_KEY = apiKey || process?.env?.OPENAI_API_KEY || ''
+    const API_KEY = apiKey || process?.env?.LINGYIWANWU_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
-        return 'there is no messages or api key of Openai'
+        return 'there is no messages or api key of Lingyiwanwu'
     }
     const { history } = convertMessages(messages)
-    const openai = new OpenAI({
+    const lingyiwanwu = new OpenAI({
         apiKey: API_KEY,
+        baseURL: baseUrl,
     })
 
     console.log(`isStream`, isStream)
 
     if (isStream) {
         try {
-            const completion = await openai.chat.completions.create({
+            const completion = await lingyiwanwu.chat.completions.create({
                 model: modelUse,
                 max_tokens: generationConfig.maxOutputTokens,
                 temperature: 0,
@@ -52,7 +54,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
             let content = ``
             for await (const chunk of completion) {
                 const text = chunk.choices[0].delta.content
-                console.log(`Openai text`, text)
+                console.log(`Lingyiwanwu text`, text)
                 if (text) {
                     streamHanler({
                         token: text,
@@ -66,7 +68,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
                 status: true,
             })
         } catch (e) {
-            console.log(`Openai error`, e)
+            console.log(`Lingyiwanwu error`, e)
 
             completeHandler({
                 content: '',
@@ -76,7 +78,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
     } else {
         let msg = ''
         try {
-            const result = await openai.chat.completions.create({
+            const result = await lingyiwanwu.chat.completions.create({
                 model: modelUse,
                 max_tokens: generationConfig.maxOutputTokens,
                 temperature: 0,
@@ -85,40 +87,40 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
             })
             msg = result?.choices?.[0]?.message?.content || ''
         } catch (e) {
-            console.log(`openai error`, e)
+            console.log(`lingyiwanwu error`, e)
             msg = String(e)
         }
 
-        console.log(`Openai result`, msg)
+        console.log(`Lingyiwanwu result`, msg)
         return msg
     }
 }
 
-const loaderOpenai = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) => {
-    ctx.loaderOpenaiArgs = {
-        ...ctx.loaderOpenaiArgs,
+const loaderLingyiwanwu = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) => {
+    ctx.loaderLingyiwanwuArgs = {
+        ...ctx.loaderLingyiwanwuArgs,
         [key]: args,
     }
 
-    if (!ctx?.loaderOpenai) {
-        ctx.loaderOpenai = new DataLoader<string, string>(async keys => {
-            console.log(`loaderOpenai-keys-🐹🐹🐹`, keys)
+    if (!ctx?.loaderLingyiwanwu) {
+        ctx.loaderLingyiwanwu = new DataLoader<string, string>(async keys => {
+            console.log(`loaderLingyiwanwu-keys-🐹🐹🐹`, keys)
             try {
-                const openaiAnswerList = await Promise.all(
+                const lingyiwanwuAnswerList = await Promise.all(
                     keys.map(key =>
-                        fetchOpenai(ctx, {
-                            ...ctx.loaderOpenaiArgs[key],
+                        fetchLingyiwanwu(ctx, {
+                            ...ctx.loaderLingyiwanwuArgs[key],
                         })
                     )
                 )
-                return openaiAnswerList
+                return lingyiwanwuAnswerList
             } catch (e) {
-                console.log(`[loaderOpenai] error: ${e}`)
+                console.log(`[loaderLingyiwanwu] error: ${e}`)
             }
             return new Array(keys.length || 1).fill({ status: false })
         })
     }
-    return ctx.loaderOpenai
+    return ctx.loaderLingyiwanwu
 }
 
-export default { fetch: fetchOpenai, loader: loaderOpenai }
+export default { fetch: fetchLingyiwanwu, loader: loaderLingyiwanwu }

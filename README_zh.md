@@ -16,6 +16,7 @@ GraphQL-AI-Mashup 是一个集成各种类型 AI 接口的应用程序,通过 Gr
 |Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|
 |Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
 |Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
+|零一万物|yi-34b-chat-0205|[零一万物 Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
 
 ## 快速开始
 ### 安装依赖
