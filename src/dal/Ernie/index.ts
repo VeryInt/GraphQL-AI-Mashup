@@ -70,24 +70,69 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
 
     const { history } = convertMessages(messages)
 
-    const body = {
+    let body = {
         messages: history,
         max_output_tokens: generationConfig.maxOutputTokens,
+        stream: false,
     }
 
     console.log(`history`, history)
     console.log(`isStream`, isStream)
 
     if (isStream) {
-        console.log(`this is in baidu stream`)
-        streamHanler({
-            token: `currently stream mode is not supported`,
-            status: true,
-        })
-        completeHandler({
-            content: `currently stream mode is not supported`,
-            status: false,
-        })
+        let msg = ''
+        try {
+            body.stream = true
+            const response: Record<string, any> = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            })
+
+            if (response.ok) {
+                const reader = response.body.getReader()
+                let totalContent = ``
+                while (true) {
+                    const { done, value } = await reader.read()
+                    if (done) {
+                        break
+                    }
+
+                    // 处理事件数据
+                    const utf8String = new TextDecoder('utf-8').decode(value)
+                    const dataInString = utf8String.replace(/^data\:/, '')
+                    const resultJson = JSON.parse(dataInString)
+                    console.log(`resultJson`, resultJson)
+                    const token = resultJson?.result || ``
+                    if (token) {
+                        totalContent += token
+                        streamHanler({
+                            token,
+                            status: true,
+                        })
+                    }
+                }
+                completeHandler({
+                    content: totalContent,
+                    status: true,
+                })
+            } else {
+                console.error('Error fetching events:', response.status)
+            }
+        } catch (e) {
+            console.log(`ernie error`, e)
+            msg = String(e)
+            streamHanler({
+                token: msg || `currently stream mode is not supported`,
+                status: true,
+            })
+            completeHandler({
+                content: msg || `currently stream mode is not supported`,
+                status: false,
+            })
+        }
     } else {
         let msg = ''
         try {
