@@ -14,7 +14,7 @@ const generationConfig = {
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
     let history = _.map(messages, message => {
         return {
-            role: message.role == Roles.model ? Roles.assistant : Roles.user,
+            role: message.role == Roles.model ? Roles.assistant : message.role,
             content: message.content,
         }
     })

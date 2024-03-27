@@ -16,7 +16,7 @@ const generationConfig = {
 const convertMessages = (messages: IErnieDalArgs['messages']) => {
     let history = _.map(messages, message => {
         return {
-            role: message.role == Roles.model ? Roles.assistant : Roles.user,
+            role: message.role == Roles.model ? Roles.assistant : message.role,
             content: message.content,
         }
     })
@@ -75,6 +75,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         max_output_tokens: generationConfig.maxOutputTokens,
     }
 
+    console.log(`history`, history)
     console.log(`isStream`, isStream)
 
     if (isStream) {
