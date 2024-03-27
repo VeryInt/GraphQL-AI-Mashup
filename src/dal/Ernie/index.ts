@@ -162,6 +162,8 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         }
         return msg
     }
+
+    return ''
 }
 
 const loaderErnie = async (ctx: TBaseContext, args: IErnieDalArgs, key: string) => {
