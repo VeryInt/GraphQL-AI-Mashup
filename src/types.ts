@@ -18,3 +18,7 @@ export interface ICommonDalArgs {
     completeHandler?: (params: { content: string; status: boolean }) => void
     streamHanler?: (params: { token: string; status: boolean }) => void
 }
+
+export interface IErnieDalArgs extends ICommonDalArgs {
+    secretKey?: string
+}

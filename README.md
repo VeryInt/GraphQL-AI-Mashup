@@ -19,6 +19,7 @@ GraphQL-AI-Mashup is an application that integrates various types of AI interfac
 |Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
 |Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
 |lingyiwanwu|yi-34b-chat-0205|[lingyiwanwu Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
+|Baidu Ernie|ernie-3.5-4k-0205|[Baidu Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/flfmc9do2)|
 
 ## Getting Started
 ### Install Dependencies
