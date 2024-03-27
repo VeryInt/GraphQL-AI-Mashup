@@ -78,8 +78,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         stream: false,
     }
 
-    console.log(`history`, history)
-    console.log(`isStream`, isStream)
+    console.log(`isStream`, String(isStream))
 
     if (isStream) {
         try {
@@ -133,13 +132,12 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
             }
         } catch (e) {
             console.log(`ernie error`, e)
-            let errorMsg = String(e)
             streamHanler({
-                token: errorMsg || defaultErrorInfo,
+                token: defaultErrorInfo,
                 status: true,
             })
             completeHandler({
-                content: errorMsg || defaultErrorInfo,
+                content: defaultErrorInfo,
                 status: false,
             })
         }
