@@ -44,7 +44,7 @@ const resolvers = {
                 const chatArgs = parent?.chatArgs || {}
                 const baseMessages = chatArgs.messages || []
                 const ernieArgs = args?.params || {}
-                const { messages: appendMessages, apiKey, model } = ernieArgs || {}
+                const { messages: appendMessages, apiKey, secretKey, model } = ernieArgs || {}
                 const messages = _.concat([], baseMessages || [], appendMessages || []) || []
                 const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -54,6 +54,7 @@ const resolvers = {
                         {
                             messages,
                             apiKey,
+                            secretKey,
                             model,
                             isStream: true,
                             completeHandler: ({ content, status }) => {
