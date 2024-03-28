@@ -108,7 +108,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
                     console.log('-------------')
                     console.log(`msg.data`, data)
                     console.log(`------------------`)
-                    const resultJson = eval(`(${data})`)
+                    const resultJson = JSON.parse(data)
                     console.log(`resultJson`, resultJson)
                     const token = resultJson?.result || ``
                     if (token) {
