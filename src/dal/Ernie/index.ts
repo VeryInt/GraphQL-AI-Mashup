@@ -56,7 +56,7 @@ const getAccessToken = async ({ apiKey, secretKey }: { apiKey?: string; secretKe
 }
 
 const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, secretKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
+    const { messages, apiKey, secretKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
     const API_KEY = apiKey || process?.env?.ERNIE_API_KEY || ''
     const SECRET_KEY = secretKey || process?.env?.ERNIE_SECRET_KEY || ''
     const modelUse = (modelName || DEFAULT_MODEL_NAME).toLowerCase()
@@ -108,7 +108,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
                     const token = resultJson?.result || ``
                     if (token) {
                         totalContent += token
-                        streamhandler({
+                        streamHandler({
                             token,
                             status: true,
                         })
@@ -121,7 +121,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
             } else {
                 const errorMsg = 'Error fetching events:' + response.status
                 console.error(errorMsg)
-                streamhandler({
+                streamHandler({
                     token: errorMsg || defaultErrorInfo,
                     status: true,
                 })
@@ -132,7 +132,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
             }
         } catch (e) {
             console.log(`ernie error`, e)
-            streamhandler({
+            streamHandler({
                 token: defaultErrorInfo,
                 status: true,
             })

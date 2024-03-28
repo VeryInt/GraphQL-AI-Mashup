@@ -16,7 +16,7 @@ export interface ICommonDalArgs {
     apiKey?: string
     isStream?: boolean
     completeHandler?: (params: { content: string; status: boolean }) => void
-    streamhandler?: (params: { token: string; status: boolean }) => void
+    streamHandler?: (params: { token: string; status: boolean }) => void
 }
 
 export interface IGeminiProDalArgs extends ICommonDalArgs {

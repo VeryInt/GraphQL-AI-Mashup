@@ -24,7 +24,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchGroq = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
     const API_KEY = apiKey || process?.env?.GROQ_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -53,7 +53,7 @@ const fetchGroq = async (ctx: TBaseContext, params: Record<string, any>, options
                 const text = chunk.choices[0].delta.content
                 console.log(`Groq text`, text)
                 if (text) {
-                    streamhandler({
+                    streamHandler({
                         token: text,
                         status: true,
                     })

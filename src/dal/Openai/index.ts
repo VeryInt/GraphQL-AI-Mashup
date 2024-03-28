@@ -25,7 +25,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
     const API_KEY = apiKey || process?.env?.OPENAI_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -54,7 +54,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
                 const text = chunk.choices[0].delta.content
                 console.log(`Openai text`, text)
                 if (text) {
-                    streamhandler({
+                    streamHandler({
                         token: text,
                         status: true,
                     })

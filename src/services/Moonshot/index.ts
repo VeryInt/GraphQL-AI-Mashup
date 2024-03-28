@@ -55,7 +55,7 @@ const resolvers = {
                             completeHandler: ({ content, status }) => {
                                 stop()
                             },
-                            streamhandler: ({ token, status }) => {
+                            streamHandler: ({ token, status }) => {
                                 if (token && status) {
                                     push(token)
                                 }
