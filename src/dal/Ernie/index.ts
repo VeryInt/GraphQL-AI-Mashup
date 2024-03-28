@@ -82,28 +82,33 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
 
     if (isStream) {
         try {
+            let totalContent = ``
             body.stream = true
-            const response: Record<string, any> = await fetch(url, {
+            const options = {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    Accept: 'text/event-stream',
                 },
                 body: JSON.stringify(body),
-            })
+            }
 
-            if (response.ok) {
-                const reader = response.body.getReader()
-                let totalContent = ``
-                while (true) {
-                    const { done, value } = await reader.read()
-                    if (done) {
-                        break
-                    }
-
-                    // 处理事件数据
-                    const utf8String = new TextDecoder('utf-8').decode(value)
-                    const dataInString = utf8String.replace(/^data\:/, '')
-                    const resultJson = JSON.parse(dataInString)
+            fetchEventStream({
+                url,
+                options,
+                completeHandler: () => {
+                    console.log(`totalContent`, totalContent)
+                    completeHandler({
+                        content: `closed`,
+                        status: true,
+                    })
+                },
+                streamHandler: data => {
+                    console.log('Event:', data)
+                    console.log('-------------')
+                    console.log(`msg.data`, data)
+                    console.log(`------------------`)
+                    const resultJson = eval(`(${data})`)
                     console.log(`resultJson`, resultJson)
                     const token = resultJson?.result || ``
                     if (token) {
@@ -113,23 +118,8 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
                             status: true,
                         })
                     }
-                }
-                completeHandler({
-                    content: totalContent,
-                    status: true,
-                })
-            } else {
-                const errorMsg = 'Error fetching events:' + response.status
-                console.error(errorMsg)
-                streamHandler({
-                    token: errorMsg || defaultErrorInfo,
-                    status: true,
-                })
-                completeHandler({
-                    content: errorMsg || defaultErrorInfo,
-                    status: false,
-                })
-            }
+                },
+            })
         } catch (e) {
             console.log(`ernie error`, e)
             streamHandler({
@@ -192,3 +182,42 @@ const loaderErnie = async (ctx: TBaseContext, args: IErnieDalArgs, key: string) 
 }
 
 export default { fetch: fetchErnie, loader: loaderErnie }
+
+interface IFetchEventStreamProps {
+    url: string
+    options: Record<string, any>
+    completeHandler: () => void
+    streamHandler: (data: any) => void
+}
+const fetchEventStream = async ({ url, options, completeHandler, streamHandler }: IFetchEventStreamProps) => {
+    const response: Record<string, any> = await fetch(url, options)
+
+    const reader = response.body.getReader()
+    let eventStreamBuffer = ''
+
+    // 监听流中的数据
+    reader.read().then(function processStream({ done, value }: { done: boolean; value: any }) {
+        if (done) {
+            console.log('Stream complete')
+            completeHandler()
+            return
+        }
+        const chunk = new TextDecoder().decode(value) // 解码流中的数据
+        eventStreamBuffer += chunk
+
+        // 处理缓冲区中的完整事件
+        const completeMessages = eventStreamBuffer.split('\n\n') // 每个事件以两个换行符分隔
+
+        completeMessages.slice(0, -1).forEach(message => {
+            const data = message.replace(/^data: /, '') // 删除每个事件前面的“data: ”
+            console.log('Received message:', data)
+            streamHandler(data)
+        })
+
+        // 保存最后一个不完整的消息
+        eventStreamBuffer = completeMessages[completeMessages.length - 1]
+        console.log(`eventStreamBuffer====>`, eventStreamBuffer)
+        // 继续读取下一个数据块
+        reader.read().then(processStream)
+    })
+}
