@@ -26,7 +26,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchLingyiwanwu = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
     const API_KEY = apiKey || process?.env?.LINGYIWANWU_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -56,7 +56,7 @@ const fetchLingyiwanwu = async (ctx: TBaseContext, params: Record<string, any>, 
                 const text = chunk.choices[0].delta.content
                 console.log(`Lingyiwanwu text`, text)
                 if (text) {
-                    streamHanler({
+                    streamhandler({
                         token: text,
                         status: true,
                     })

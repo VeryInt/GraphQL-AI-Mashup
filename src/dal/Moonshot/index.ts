@@ -26,7 +26,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
     const API_KEY = apiKey || process?.env?.MOONSHOT_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -56,7 +56,7 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
                 const text = chunk.choices[0].delta.content
                 console.log(`Moonshot text`, text)
                 if (text) {
-                    streamHanler({
+                    streamhandler({
                         token: text,
                         status: true,
                     })

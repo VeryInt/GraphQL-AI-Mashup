@@ -55,7 +55,7 @@ const convertMessages = (messages: IGeminiProDalArgs['messages']) => {
 }
 
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler, apiVersion } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler, apiVersion } = params || {}
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -86,7 +86,7 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
         for await (const chunk of streamResult.stream) {
             const chunkText = chunk.text()
             if (chunkText) {
-                streamHanler({
+                streamhandler({
                     token: chunkText,
                     status: true,
                 })

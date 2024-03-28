@@ -60,7 +60,7 @@ const resolvers = {
                             completeHandler: ({ content, status }) => {
                                 stop()
                             },
-                            streamHanler: ({ token, status }) => {
+                            streamhandler: ({ token, status }) => {
                                 console.log(`streamHandle`, token)
                                 if (token && status) {
                                     push(token)

@@ -31,7 +31,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHanler } = params || {}
+    const { messages, apiKey, model: modelName, isStream, completeHandler, streamhandler } = params || {}
     const API_KEY = apiKey || process?.env?.CLAUDE_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     if (_.isEmpty(messages) || !API_KEY) {
@@ -53,7 +53,7 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
             .on('text', text => {
                 console.log(`claude text`, text)
                 text &&
-                    streamHanler({
+                    streamhandler({
                         status: true,
                         token: text,
                     })
