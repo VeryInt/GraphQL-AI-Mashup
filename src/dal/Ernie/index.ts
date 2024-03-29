@@ -3,6 +3,7 @@ import DataLoader from 'dataloader'
 import { IErnieDalArgs, Roles } from '../../types'
 import _ from 'lodash'
 const qs = require('qs')
+import { fetchEventStream } from '../../utils/tools'
 
 const defaultErrorInfo = `currently the mode is not supported`
 
@@ -68,14 +69,22 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         secretKey: SECRET_KEY,
     })
 
-    const url = `${baseHost}/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${modelUse}?access_token=${accessToken}`
+    const requestUrl = `${baseHost}/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/${modelUse}?access_token=${accessToken}`
 
     const { history } = convertMessages(messages)
 
-    let body = {
+    const body = {
         messages: history,
         max_output_tokens: generationConfig.maxOutputTokens,
         stream: false,
+    }
+    let requestOptions = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+        },
+        body: JSON.stringify(body),
     }
 
     console.log(`isStream`, String(isStream))
@@ -84,18 +93,14 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         try {
             let totalContent = ``
             body.stream = true
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Accept: 'text/event-stream',
-                },
-                body: JSON.stringify(body),
-            }
+            requestOptions.headers.Accept = 'text/event-stream'
+            requestOptions.body = JSON.stringify(body)
+            const options = requestOptions
 
             fetchEventStream({
-                url,
+                url: requestUrl,
                 options,
+                regex: /^data: /,
                 completeHandler: () => {
                     console.log(`totalContent`, totalContent)
                     completeHandler({
@@ -104,12 +109,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
                     })
                 },
                 streamHandler: data => {
-                    console.log('Event:', data)
-                    console.log('-------------')
-                    console.log(`msg.data`, data)
-                    console.log(`------------------`)
                     const resultJson = JSON.parse(data)
-                    console.log(`resultJson`, resultJson)
                     const token = resultJson?.result || ``
                     if (token) {
                         totalContent += token
@@ -134,13 +134,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
     } else {
         let msg = ''
         try {
-            const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(body),
-            })
+            const response = await fetch(requestUrl, requestOptions)
             const result = await response.json()
 
             msg = result?.result
@@ -182,42 +176,3 @@ const loaderErnie = async (ctx: TBaseContext, args: IErnieDalArgs, key: string) 
 }
 
 export default { fetch: fetchErnie, loader: loaderErnie }
-
-interface IFetchEventStreamProps {
-    url: string
-    options: Record<string, any>
-    completeHandler: () => void
-    streamHandler: (data: any) => void
-}
-const fetchEventStream = async ({ url, options, completeHandler, streamHandler }: IFetchEventStreamProps) => {
-    const response: Record<string, any> = await fetch(url, options)
-
-    const reader = response.body.getReader()
-    let eventStreamBuffer = ''
-
-    // 监听流中的数据
-    reader.read().then(function processStream({ done, value }: { done: boolean; value: any }) {
-        if (done) {
-            console.log('Stream complete')
-            completeHandler()
-            return
-        }
-        const chunk = new TextDecoder().decode(value) // 解码流中的数据
-        eventStreamBuffer += chunk
-
-        // 处理缓冲区中的完整事件
-        const completeMessages = eventStreamBuffer.split('\n\n') // 每个事件以两个换行符分隔
-
-        completeMessages.slice(0, -1).forEach(message => {
-            const data = message.replace(/^data: /, '') // 删除每个事件前面的“data: ”
-            console.log('Received message:', data)
-            streamHandler(data)
-        })
-
-        // 保存最后一个不完整的消息
-        eventStreamBuffer = completeMessages[completeMessages.length - 1]
-        console.log(`eventStreamBuffer====>`, eventStreamBuffer)
-        // 继续读取下一个数据块
-        reader.read().then(processStream)
-    })
-}
