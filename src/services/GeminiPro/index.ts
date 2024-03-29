@@ -18,6 +18,8 @@ const typeDefinitions = `
         model: String
         "API Version"
         apiVersion: String
+        "Max Tokens"
+        maxTokens: Int
     }
 `
 
@@ -27,7 +29,8 @@ const resolvers = {
             const chatArgs = parent?.chatArgs || {}
             const baseMessages = chatArgs.messages || []
             const geminiProArgs = args?.params || {}
-            const { messages: appendMessages, apiKey, model, apiVersion } = geminiProArgs || {}
+            const { messages: appendMessages, apiKey, model, apiVersion, maxTokens } = geminiProArgs || {}
+            const maxTokensUse = maxTokens || chatArgs?.maxTokens
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
@@ -35,7 +38,11 @@ const resolvers = {
                 return { text: '' }
             }
             const text: any = await (
-                await GeminiProDal.loader(context, { messages, apiKey, model, apiVersion }, key)
+                await GeminiProDal.loader(
+                    context,
+                    { messages, apiKey, model, apiVersion, maxOutputTokens: maxTokensUse },
+                    key
+                )
             ).load(key)
             return { text }
         },

@@ -2,17 +2,12 @@
 import DataLoader from 'dataloader'
 import { ICommonDalArgs, Roles } from '../../types'
 import _ from 'lodash'
+import { generationConfig } from '../../utils/constants'
 import { fetchEventStream } from '../../utils/tools'
 
 const defaultErrorInfo = `currently the mode is not supported`
 const DEFAULT_MODEL_NAME = 'qwen-turbo'
 const requestUrl = `https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation`
-const generationConfig = {
-    temperature: 0.9,
-    topK: 1,
-    topP: 1,
-    maxOutputTokens: 1024,
-}
 
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
     let history = _.map(messages, message => {
@@ -27,9 +22,18 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchQwen = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
+    const {
+        messages,
+        apiKey,
+        model: modelName,
+        isStream,
+        maxOutputTokens,
+        completeHandler,
+        streamHandler,
+    } = params || {}
     const API_KEY = apiKey || process?.env?.QWEN_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
+    const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
 
     if (_.isEmpty(messages) || !API_KEY) {
         return 'there is no messages or api key of Qwen'
@@ -42,7 +46,7 @@ const fetchQwen = async (ctx: TBaseContext, params: Record<string, any>, options
         model: modelUse,
         input: { messages: history },
         parameters: {
-            max_tokens: generationConfig.maxOutputTokens,
+            max_tokens,
             result_format: 'message',
         },
     }

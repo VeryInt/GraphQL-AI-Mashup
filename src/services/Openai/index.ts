@@ -16,6 +16,8 @@ const typeDefinitions = `
         apiKey: String
         "Model Name"
         model: String
+        "Max Tokens"
+        maxTokens: Int
     }
 `
 
@@ -25,14 +27,17 @@ const resolvers = {
             const chatArgs = parent?.chatArgs || {}
             const baseMessages = chatArgs.messages || []
             const openaiArgs = args?.params || {}
-            const { messages: appendMessages, apiKey, model } = openaiArgs || {}
+            const { messages: appendMessages, apiKey, model, maxTokens } = openaiArgs || {}
+            const maxTokensUse = maxTokens || chatArgs?.maxTokens
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
             if (!key) {
                 return { text: '' }
             }
-            const text: any = await (await OpenaiDal.loader(context, { messages, apiKey, model }, key)).load(key)
+            const text: any = await (
+                await OpenaiDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse }, key)
+            ).load(key)
             return { text }
         },
         OpenaiStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {

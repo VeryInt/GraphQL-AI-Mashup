@@ -3,14 +3,9 @@ import DataLoader from 'dataloader'
 import { ICommonDalArgs, Roles } from '../../types'
 import Anthropic from '@anthropic-ai/sdk'
 import _ from 'lodash'
+import { generationConfig } from '../../utils/constants'
 
 const DEFAULT_MODEL_NAME = 'claude-3-haiku-20240307'
-const generationConfig = {
-    temperature: 0.9,
-    topK: 1,
-    topP: 1,
-    maxOutputTokens: 1024,
-}
 
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
     let history = _.map(messages, message => {
@@ -31,9 +26,18 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
+    const {
+        messages,
+        apiKey,
+        model: modelName,
+        maxOutputTokens,
+        isStream,
+        completeHandler,
+        streamHandler,
+    } = params || {}
     const API_KEY = apiKey || process?.env?.CLAUDE_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
+    const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {
         return 'there is no messages or api key of Claude'
     }
@@ -48,7 +52,7 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
                 // @ts-ignore
                 messages: history,
                 model: modelUse,
-                max_tokens: generationConfig.maxOutputTokens,
+                max_tokens,
             })
             .on('text', text => {
                 console.log(`claude text`, text)
@@ -78,7 +82,7 @@ const fetchClaude = async (ctx: TBaseContext, params: Record<string, any>, optio
         try {
             const result = await anthropic.messages.create({
                 model: modelUse,
-                max_tokens: generationConfig.maxOutputTokens,
+                max_tokens,
                 temperature: 0,
                 // @ts-ignore
                 messages: history,

@@ -4,17 +4,12 @@ import { IErnieDalArgs, Roles } from '../../types'
 import _ from 'lodash'
 const qs = require('qs')
 import { fetchEventStream } from '../../utils/tools'
+import { generationConfig } from '../../utils/constants'
 
 const defaultErrorInfo = `currently the mode is not supported`
 
 const DEFAULT_MODEL_NAME = 'ernie-3.5-4k-0205'
 const baseHost = 'https://aip.baidubce.com'
-const generationConfig = {
-    temperature: 0.9,
-    topK: 1,
-    topP: 1,
-    maxOutputTokens: 1024,
-}
 
 const convertMessages = (messages: IErnieDalArgs['messages']) => {
     let history = _.map(messages, message => {
@@ -57,10 +52,20 @@ const getAccessToken = async ({ apiKey, secretKey }: { apiKey?: string; secretKe
 }
 
 const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, secretKey, model: modelName, isStream, completeHandler, streamHandler } = params || {}
+    const {
+        messages,
+        apiKey,
+        secretKey,
+        model: modelName,
+        maxOutputTokens,
+        isStream,
+        completeHandler,
+        streamHandler,
+    } = params || {}
     const API_KEY = apiKey || process?.env?.ERNIE_API_KEY || ''
     const SECRET_KEY = secretKey || process?.env?.ERNIE_SECRET_KEY || ''
     const modelUse = (modelName || DEFAULT_MODEL_NAME).toLowerCase()
+    const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY || !SECRET_KEY) {
         return 'there is no messages or api key of Ernie'
     }
@@ -75,7 +80,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
 
     const body = {
         messages: history,
-        max_output_tokens: generationConfig.maxOutputTokens,
+        max_output_tokens: max_tokens,
         stream: false,
     }
     let requestOptions = {

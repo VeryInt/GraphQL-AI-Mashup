@@ -4,15 +4,11 @@ import { IGeminiProDalArgs, Roles } from '../../types'
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai'
 import _ from 'lodash'
 import { mergeMessages } from '../../utils/tools'
+import { generationConfig } from '../../utils/constants'
 
 const DEFAULT_API_VERSION = 'v1'
 const DEFAULT_MODEL_NAME = 'gemini-1.0-pro-latest'
-const generationConfig = {
-    temperature: 0.9,
-    topK: 1,
-    topP: 1,
-    maxOutputTokens: 2048,
-}
+
 const safetySettings = [
     {
         category: HarmCategory.HARM_CATEGORY_HARASSMENT,
@@ -55,9 +51,19 @@ const convertMessages = (messages: IGeminiProDalArgs['messages']) => {
 }
 
 const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, options: Record<string, any> = {}) => {
-    const { messages, apiKey, model: modelName, isStream, completeHandler, streamHandler, apiVersion } = params || {}
+    const {
+        messages,
+        apiKey,
+        model: modelName,
+        isStream,
+        maxOutputTokens,
+        completeHandler,
+        streamHandler,
+        apiVersion,
+    } = params || {}
     const API_KEY = apiKey || process?.env?.GEMINI_PRO_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
+    const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {
         return 'there is no messages or api key of Claude of GeminiPro'
     }
@@ -71,7 +77,7 @@ const fetchGeminiPro = async (ctx: TBaseContext, params: Record<string, any>, op
         }
     )
     const chat = model.startChat({
-        generationConfig,
+        generationConfig: { ...generationConfig, maxOutputTokens: max_tokens },
         safetySettings,
         history: history,
     })

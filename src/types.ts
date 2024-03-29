@@ -15,6 +15,7 @@ export interface ICommonDalArgs {
     model?: string
     apiKey?: string
     isStream?: boolean
+    maxOutputTokens?: number
     completeHandler?: (params: { content: string; status: boolean }) => void
     streamHandler?: (params: { token: string; status: boolean }) => void
 }

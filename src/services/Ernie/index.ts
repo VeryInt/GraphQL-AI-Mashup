@@ -18,6 +18,8 @@ const typeDefinitions = `
         secretKey: String
         "Model Name"
         model: String
+        "Max Tokens"
+        maxTokens: Int
     }
 `
 
@@ -27,7 +29,8 @@ const resolvers = {
             const chatArgs = parent?.chatArgs || {}
             const baseMessages = chatArgs.messages || []
             const ernieArgs = args?.params || {}
-            const { messages: appendMessages, apiKey, secretKey, model } = ernieArgs || {}
+            const { messages: appendMessages, apiKey, secretKey, model, maxTokens } = ernieArgs || {}
+            const maxTokensUse = maxTokens || chatArgs?.maxTokens
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
@@ -35,7 +38,11 @@ const resolvers = {
                 return { text: '' }
             }
             const text: any = await (
-                await ErnieDal.loader(context, { messages, apiKey, secretKey, model }, key)
+                await ErnieDal.loader(
+                    context,
+                    { messages, apiKey, secretKey, model, maxOutputTokens: maxTokensUse },
+                    key
+                )
             ).load(key)
             return { text }
         },

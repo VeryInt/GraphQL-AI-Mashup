@@ -17,8 +17,10 @@ const typeDefinitions = `
     }
 
     input ChatArgs {
-        "提问内容"
+        "Request Message List"
         messages: [Message]
+        "Max Tokens"
+        maxTokens: Int
     }
 `
 
