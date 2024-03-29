@@ -17,8 +17,8 @@ GraphQL-AI-Mashup 是一个集成各种类型 AI 接口的应用程序,通过 Gr
 |Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
 |Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
 |零一万物|yi-34b-chat-0205|[零一万物 Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
-|百度 Ernie|ernie-3.5-4k-0205|[百度 Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/flfmc9do2)|
-|阿里千问|qwen-turbo|[获取API KEY](https://help.aliyun.com/document_detail/2712195.html?spm=a2c4g.2712581.0.i2)<br/>[开通服务](https://help.aliyun.com/document_detail/2586399.html)<br/>[模型说明](https://help.aliyun.com/document_detail/2713153.html?navBarStyle=white)|
+|百度 Ernie|ernie-3.5-4k-0205|[获取API KEY & SECRET KEY](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/yloieb01t)<br />[Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Nlks5zkzu#%E5%AF%B9%E8%AF%9Dchat)|
+|阿里千问|qwen-turbo|[获取API KEY](https://help.aliyun.com/document_detail/2712195.html?spm=a2c4g.2712581.0.i2)<br/>[开通服务](https://help.aliyun.com/document_detail/2586399.html)<br/>[千问 Models](https://help.aliyun.com/document_detail/2713153.html?navBarStyle=white)|
 
 ## 快速开始
 ### 安装依赖

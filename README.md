@@ -18,8 +18,8 @@ GraphQL-AI-Mashup is an application that integrates various types of AI interfac
 |Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|
 |Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
 |Groq|mixtral-8x7b-32768|[Groq Models](https://console.groq.com/docs/models)|
-|lingyiwanwu|yi-34b-chat-0205|[lingyiwanwu Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
-|Baidu Ernie|ernie-3.5-4k-0205|[Baidu Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/flfmc9do2)|
+|lingyiwanwu|yi-34b-chat-0205|[LingYiWanWu Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
+|Baidu Ernie|ernie-3.5-4k-0205|[Get API KEY & SECRET KEY](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/yloieb01t)<br />[Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Nlks5zkzu#%E5%AF%B9%E8%AF%9Dchat)|
 |Ali Qwen|qwen-turbo|[Get API KEY](https://help.aliyun.com/document_detail/2712195.html?spm=a2c4g.2712581.0.i2)<br/>[Subscribe to Services](https://help.aliyun.com/document_detail/2586399.html)<br/>[Qwen Models](https://help.aliyun.com/document_detail/2713153.html?navBarStyle=white)|
 
 ## Getting Started
