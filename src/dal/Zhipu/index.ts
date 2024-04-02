@@ -63,11 +63,8 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
 
     const body = {
         model: modelUse,
-        input: { messages: history },
-        parameters: {
-            max_tokens,
-            result_format: 'message',
-        },
+        messages: history,
+        max_tokens,
     }
 
     const requestOptions = {
