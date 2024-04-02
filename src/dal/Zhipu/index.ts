@@ -4,7 +4,7 @@ import { ICommonDalArgs, Roles } from '../../types'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
 import { fetchEventStream } from '../../utils/tools'
-import jwt from 'jsonwebtoken'
+import { SignJWT } from 'jose'
 
 const defaultErrorInfo = `currently the mode is not supported`
 const DEFAULT_MODEL_NAME = 'glm-3-turbo'
@@ -22,13 +22,17 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
     }
 }
 
-const getAuthToken = ({ apiKey }: { apiKey: string }): string => {
+const getAuthToken = async ({ apiKey }: { apiKey: string }): Promise<string> => {
     const [key, secret] = apiKey.split('.')
     const now = Date.now()
     let authToken = ''
     const payload = { api_key: key, exp: now + 10000, timestamp: now }
     try {
-        authToken = jwt.sign(payload, secret, { algorithm: 'HS256' })
+        authToken = await new SignJWT(payload)
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('1m')
+            .sign(new TextEncoder().encode(secret))
     } catch (e) {
         console.log(`get authToken error`, e)
     }
@@ -50,7 +54,7 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
 
-    const authToken = getAuthToken({ apiKey: API_KEY })
+    const authToken = await getAuthToken({ apiKey: API_KEY })
 
     if (_.isEmpty(messages) || !authToken) {
         return 'there is no messages or api key of Zhipu'
