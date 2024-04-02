@@ -73,7 +73,7 @@ export const fetchEventStream = async ({
         })
 
         // 保存最后一个不完整的消息
-        eventStreamBuffer = completeMessages.length > 1 ? completeMessages[completeMessages.length - 1] : ''
+        eventStreamBuffer = completeMessages[completeMessages.length - 1] || ''
         console.log(`eventStreamBuffer====>`, eventStreamBuffer)
         // 继续读取下一个数据块
         reader.read().then(processStream)
