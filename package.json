@@ -42,6 +42,7 @@
   "homepage": "https://github.com/VeryInt/GraphQL-AI-Mashup#readme",
   "license": "ISC",
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/lodash": "^4.17.0",
     "@types/node": "20.11.30",
     "@typescript-eslint/eslint-plugin": "^7.3.1",
@@ -62,12 +63,13 @@
     "@anthropic-ai/sdk": "^0.19.0",
     "@google/generative-ai": "^0.3.1",
     "@graphql-tools/schema": "^10.0.3",
-    "@graphql-yoga/plugin-defer-stream": "^3.2.0",
+    "@graphql-yoga/plugin-defer-stream": "^3.3.0",
     "dataloader": "^2.2.2",
     "dotenv": "^16.4.5",
     "graphql": "^16.8.1",
-    "graphql-yoga": "5.2.0",
+    "graphql-yoga": "^5.3.0",
     "groq-sdk": "^0.3.2",
+    "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "openai": "^4.29.2",
     "qs": "^6.12.0"

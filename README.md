@@ -21,6 +21,7 @@ GraphQL-AI-Mashup is an application that integrates various types of AI interfac
 |lingyiwanwu|yi-34b-chat-0205|[LingYiWanWu Models](https://platform.lingyiwanwu.com/docs#-%E5%A4%A7%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B)|
 |Baidu Ernie|ernie-3.5-4k-0205|[Get API KEY & SECRET KEY](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/yloieb01t)<br />[Ernie Models](https://cloud.baidu.com/doc/WENXINWORKSHOP/s/Nlks5zkzu#%E5%AF%B9%E8%AF%9Dchat)|
 |Ali Qwen|qwen-turbo|[Get API KEY](https://help.aliyun.com/document_detail/2712195.html?spm=a2c4g.2712581.0.i2)<br/>[Subscribe to Services](https://help.aliyun.com/document_detail/2586399.html)<br/>[Qwen Models](https://help.aliyun.com/document_detail/2713153.html?navBarStyle=white)|
+|Zhipu AI|glm-3-turbo|[API & Token](https://open.bigmodel.cn/dev/api#http)<br />[Zhipu Models](https://open.bigmodel.cn/dev/api#language)|
 
 ## Getting Started
 ### Install Dependencies
