@@ -98,12 +98,10 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
                 },
                 streamHandler: data => {
                     const resultJson = JSON.parse(data)
-                    // zhipu的sse是每次新消息返回的内容是全部拼接在一起的
-                    const newContent = resultJson?.choices?.[0]?.message?.content || ``
-                    const token = newContent.replace(totalContent, '')
-                    totalContent = newContent
+                    const token = resultJson?.choices?.[0]?.delta?.content || ``
                     console.log(`token`, token)
                     if (token) {
+                        totalContent += token
                         streamHandler({
                             token,
                             status: true,
