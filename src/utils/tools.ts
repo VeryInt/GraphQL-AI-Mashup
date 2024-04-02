@@ -1,4 +1,5 @@
 import { IMessage, Roles } from '../types'
+import _ from 'lodash'
 
 export const mergeMessages = (messages: IMessage[] | undefined): IMessage[] => {
     const mergedMessages: IMessage[] = []
@@ -63,7 +64,7 @@ export const fetchEventStream = async ({
 
         // 处理缓冲区中的完整事件
         const completeMessages = eventStreamBuffer.split('\n\n') // 每个事件以两个换行符分隔
-        completeMessages.slice(0, -1).forEach(message => {
+        _.each(completeMessages.slice(0, -1), message => {
             const data = message.replace(useRegex, '') // 删除每个事件前面的“data: ”
             console.log('Received message:', data)
             console.log(`==========================`)

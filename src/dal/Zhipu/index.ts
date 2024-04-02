@@ -55,7 +55,13 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
 
     const authToken = await getAuthToken({ apiKey: API_KEY })
 
-    if (_.isEmpty(messages) || !authToken) {
+    if (_.isEmpty(messages) || !API_KEY || !authToken) {
+        if (isStream) {
+            streamHandler({
+                token: 'there is no messages or api key of Zhipu',
+                status: true,
+            })
+        }
         return 'there is no messages or api key of Zhipu'
     }
     const { history } = convertMessages(messages)
@@ -97,7 +103,10 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
                     })
                 },
                 streamHandler: data => {
-                    const resultJson = JSON.parse(data)
+                    let resultJson: Record<string, any> = {}
+                    try {
+                        resultJson = JSON.parse(data)
+                    } catch (e) {}
                     const token = resultJson?.choices?.[0]?.delta?.content || ``
                     console.log(`token`, token)
                     if (token) {
@@ -110,7 +119,7 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
                 },
             })
         } catch (e) {
-            console.log(`ernie error`, e)
+            console.log(`zhipu error`, e)
             streamHandler({
                 token: defaultErrorInfo,
                 status: true,
