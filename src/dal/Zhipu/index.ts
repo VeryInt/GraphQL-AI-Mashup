@@ -65,6 +65,7 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
         model: modelUse,
         messages: history,
         max_tokens,
+        stream: false,
     }
 
     const requestOptions = {
@@ -80,6 +81,8 @@ const fetchZhipu = async (ctx: TBaseContext, params: Record<string, any>, option
     console.log(`requestOptions`, requestOptions)
     if (isStream) {
         requestOptions.headers.Accept = `text/event-stream`
+        body.stream = true
+        requestOptions.body = JSON.stringify(body)
         let totalContent = ``
         try {
             fetchEventStream({
