@@ -29,9 +29,8 @@ const getAuthToken = async ({ apiKey }: { apiKey: string }): Promise<string> => 
     const payload = { api_key: key, exp: now + 10000, timestamp: now }
     try {
         authToken = await new SignJWT(payload)
-            .setProtectedHeader({ alg: 'HS256' })
-            .setIssuedAt()
-            .setExpirationTime('1m')
+            .setProtectedHeader({ alg: 'HS256', sign_type: 'SIGN' })
+            .setExpirationTime('3s')
             .sign(new TextEncoder().encode(secret))
     } catch (e) {
         console.log(`get authToken error`, e)
