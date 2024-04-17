@@ -9,8 +9,9 @@ import Lingyiwanwu from './Lingyiwanwu'
 import Ernie from './Ernie'
 import Qwen from './Qwen'
 import Zhipu from './Zhipu'
+import Chain from './Chain'
 
-const serviceList = [ChatCommon, Openai, GeminiPro, Claude, Moonshot, Groq, Lingyiwanwu, Ernie, Qwen, Zhipu]
+const serviceList = [Chain, ChatCommon, Openai, GeminiPro, Claude, Moonshot, Groq, Lingyiwanwu, Ernie, Qwen, Zhipu]
 
 export default {
     typeDefinitions: serviceList.map(service => service.typeDefinitions),
