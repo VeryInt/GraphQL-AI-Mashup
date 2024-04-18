@@ -21,55 +21,59 @@ const typeDefinitions = `
     }
 `
 
+export const Moonshot = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
+    const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
+    const moonshotArgs = args?.params || {}
+    const { messages: appendMessages, apiKey, model, maxTokens } = moonshotArgs || {}
+    const maxTokensUse = maxTokens || baseMaxTokens
+    const messages = _.concat([], baseMessages || [], appendMessages || []) || []
+    const key = messages.at(-1)?.content
+    console.log(`key`, key)
+    if (!key) {
+        return { text: '' }
+    }
+    const text: any = await (
+        await MoonshotDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse }, key)
+    ).load(key)
+    return { text }
+}
+
+export const MoonshotStream = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
+    const xvalue = new Repeater<String>(async (push, stop) => {
+        const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
+        const moonshotArgs = args?.params || {}
+        const { messages: appendMessages, apiKey, model } = moonshotArgs || {}
+        const messages = _.concat([], baseMessages || [], appendMessages || []) || []
+        const key = `${messages.at(-1)?.content || ''}_stream`
+
+        await (
+            await MoonshotDal.loader(
+                context,
+                {
+                    messages,
+                    apiKey,
+                    model,
+                    isStream: true,
+                    completeHandler: ({ content, status }) => {
+                        stop()
+                    },
+                    streamHandler: ({ token, status }) => {
+                        if (token && status) {
+                            push(token)
+                        }
+                    },
+                },
+                key
+            )
+        ).load(key)
+    })
+    return xvalue
+}
+
 const resolvers = {
     Chat: {
-        Moonshot: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
-            const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
-            const moonshotArgs = args?.params || {}
-            const { messages: appendMessages, apiKey, model, maxTokens } = moonshotArgs || {}
-            const maxTokensUse = maxTokens || baseMaxTokens
-            const messages = _.concat([], baseMessages || [], appendMessages || []) || []
-            const key = messages.at(-1)?.content
-            console.log(`key`, key)
-            if (!key) {
-                return { text: '' }
-            }
-            const text: any = await (
-                await MoonshotDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse }, key)
-            ).load(key)
-            return { text }
-        },
-        MoonshotStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
-            const xvalue = new Repeater<String>(async (push, stop) => {
-                const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
-                const moonshotArgs = args?.params || {}
-                const { messages: appendMessages, apiKey, model } = moonshotArgs || {}
-                const messages = _.concat([], baseMessages || [], appendMessages || []) || []
-                const key = `${messages.at(-1)?.content || ''}_stream`
-
-                await (
-                    await MoonshotDal.loader(
-                        context,
-                        {
-                            messages,
-                            apiKey,
-                            model,
-                            isStream: true,
-                            completeHandler: ({ content, status }) => {
-                                stop()
-                            },
-                            streamHandler: ({ token, status }) => {
-                                if (token && status) {
-                                    push(token)
-                                }
-                            },
-                        },
-                        key
-                    )
-                ).load(key)
-            })
-            return xvalue
-        },
+        Moonshot,
+        MoonshotStream,
     },
 }
 

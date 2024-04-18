@@ -1,5 +1,12 @@
 import _ from 'lodash'
-import { Claude } from '../Claude'
+// import { Claude } from '../Claude'
+import { ChainType } from '../../utils/constants'
+const { Claude, ClaudeStream } = require('../Claude')
+const { Groq } = require('../Groq')
+const { GeminiPro } = require('../GeminiPro')
+const { Lingyiwanwu } = require('../Lingyiwanwu')
+const { Ernie } = require('../Ernie')
+const { Moonshot } = require('../Moonshot')
 
 const typeDefinitions = `
     scalar JSON
@@ -17,6 +24,8 @@ const typeDefinitions = `
     }
 
     input ChainArgs {
+        "Chain Type"
+        chainType: ChainType
         "Request Message List"
         messages: [Message!]!
         "Max Tokens"
@@ -34,6 +43,12 @@ const typeDefinitions = `
         Lingyiwanwu: LingyiwanwuArgs
     }
 
+    enum ChainType {
+        "Loop Enhance by different AI Services"
+        Enhance
+        "Assign job to different AI Services"
+        Assign
+    }
     enum AIModel {
         Claude
         Ernie
@@ -51,7 +66,9 @@ const resolvers = {
     Query: {
         chain: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
             const params = args?.params || {}
-            const { messages, maxTokens, callSequence } = params
+            const { messages, maxTokens, callSequence, chainType } = params
+            let chainMessages = [...messages]
+            const chainTypeUse = chainType || ChainType.Enhance
             let invalidateCalls: string[] = []
             if (_.isEmpty(messages)) {
                 return {
@@ -77,16 +94,28 @@ const resolvers = {
                 }
             }
 
-            for await (const aiService of callSequence) {
-                if (aiService === 'Claude') {
-                    console.log(`params[aiService]`, params[aiService], messages)
-                    const { text } = await Claude({ messages }, params[aiService], context)
-                    messages.push({ role: 'assistant', content: text })
+            if (chainTypeUse == ChainType.Enhance) {
+                try {
+                    for await (const aiService of callSequence) {
+                        console.log(`aiService`, eval(aiService))
+                        if (aiService && typeof eval(aiService) == `function`) {
+                            console.log(`params[aiService]`, params[aiService], chainMessages)
+                            const { text } = await eval(aiService)(
+                                { messages: chainMessages },
+                                params[aiService],
+                                context
+                            )
+                            chainMessages.push({ role: 'user', content: text })
+                        }
+                    }
+                } catch (e) {
+                    console.log(`Enhance error`, e)
                 }
+            } else if (chainTypeUse == ChainType.Assign) {
             }
 
             return {
-                messages: messages,
+                messages: chainMessages,
             }
         },
     },

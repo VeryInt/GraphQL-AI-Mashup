@@ -37,7 +37,7 @@ export const Claude = async (parent: TParent, args: Record<string, any>, context
     return { text }
 }
 
-const ClaudeStream = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
+export const ClaudeStream = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const claudeArgs = args?.params || {}
