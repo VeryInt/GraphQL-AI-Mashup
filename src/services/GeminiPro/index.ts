@@ -26,11 +26,10 @@ const typeDefinitions = `
 const resolvers = {
     Chat: {
         GeminiPro: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
-            const chatArgs = parent?.chatArgs || {}
-            const baseMessages = chatArgs.messages || []
+            const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
             const geminiProArgs = args?.params || {}
             const { messages: appendMessages, apiKey, model, apiVersion, maxTokens } = geminiProArgs || {}
-            const maxTokensUse = maxTokens || chatArgs?.maxTokens
+            const maxTokensUse = maxTokens || baseMaxTokens
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
@@ -48,8 +47,7 @@ const resolvers = {
         },
         GeminiProStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
             const xvalue = new Repeater<String>(async (push, stop) => {
-                const chatArgs = parent?.chatArgs || {}
-                const baseMessages = chatArgs.messages || []
+                const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
                 const geminiProArgs = args?.params || {}
                 const { messages: appendMessages, apiKey, model, apiVersion } = geminiProArgs || {}
                 const messages = _.concat([], baseMessages || [], appendMessages || []) || []

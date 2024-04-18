@@ -24,11 +24,10 @@ const typeDefinitions = `
 const resolvers = {
     Chat: {
         Openai: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
-            const chatArgs = parent?.chatArgs || {}
-            const baseMessages = chatArgs.messages || []
+            const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
             const openaiArgs = args?.params || {}
             const { messages: appendMessages, apiKey, model, maxTokens } = openaiArgs || {}
-            const maxTokensUse = maxTokens || chatArgs?.maxTokens
+            const maxTokensUse = maxTokens || baseMaxTokens
             const messages = _.concat([], baseMessages || [], appendMessages || []) || []
             const key = messages.at(-1)?.content
             console.log(`key`, key)
@@ -42,8 +41,7 @@ const resolvers = {
         },
         OpenaiStream: async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
             const xvalue = new Repeater<String>(async (push, stop) => {
-                const chatArgs = parent?.chatArgs || {}
-                const baseMessages = chatArgs.messages || []
+                const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
                 const openaiArgs = args?.params || {}
                 const { messages: appendMessages, apiKey, model } = openaiArgs || {}
                 const messages = _.concat([], baseMessages || [], appendMessages || []) || []

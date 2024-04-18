@@ -1,12 +1,17 @@
 import _ from 'lodash'
+import { Claude } from '../Claude'
 
 const typeDefinitions = `
     scalar JSON
     type Query {
-        chain(params: ChainArgs!): ChatResult
+        chain(params: ChainArgs!): ChainResult
     }
 
-    input Message {
+    type ChainResult {
+        messages: [OutputMessage]
+    }
+
+    type OutputMessage {
         role: String!
         content: String!
     }
@@ -71,8 +76,17 @@ const resolvers = {
                     text: `${invalidateCalls.join(', ')} is invalid`,
                 }
             }
+
+            for await (const aiService of callSequence) {
+                if (aiService === 'Claude') {
+                    console.log(`params[aiService]`, params[aiService], messages)
+                    const { text } = await Claude({ messages }, params[aiService], context)
+                    messages.push({ role: 'assistant', content: text })
+                }
+            }
+
             return {
-                text: JSON.stringify(messages),
+                messages: messages,
             }
         },
     },
