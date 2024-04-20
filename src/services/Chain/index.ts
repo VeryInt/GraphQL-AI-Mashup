@@ -37,6 +37,7 @@ const typeDefinitions = `
         GeminiPro: GeminiProArgs
         Moonshot: MoonshotArgs
         Openai: OpenaiArgs
+        AzureOpenai: AzureOpenaiArgs
         Qwen: QwenArgs
         Zhipu: ZhipuArgs
         Groq: GroqArgs
@@ -54,6 +55,7 @@ const typeDefinitions = `
         Ernie
         GeminiPro
         Moonshot
+        AzureOpenai
         Openai
         Qwen
         Zhipu

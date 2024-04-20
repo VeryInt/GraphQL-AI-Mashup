@@ -14,6 +14,7 @@ GraphQL-AI-Mashup is an application that integrates various types of AI interfac
 |AI|Default Model|Documentation|
 |--|--|--|
 |OpenAI|gpt-3.5-turbo|[Openai Models](https://platform.openai.com/docs/models)|
+|Azure OpenAI|gpt-3.5-turbo|[Azure Openai Models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)|
 |GeminiPro|gemini-1.0-pro-latest|[GeminiPro Models](https://ai.google.dev/models/gemini)|
 |Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|
 |Moonshot|moonshot-v1-8k|[Moonshot Models](https://platform.moonshot.cn/docs/pricing#文本生成模型-moonshot-v1)|
