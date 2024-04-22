@@ -43,7 +43,8 @@ export const GeminiProStream = async (parent: TParent, args: Record<string, any>
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const geminiProArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, model, apiVersion } = geminiProArgs || {}
+        const { messages: appendMessages, apiKey, model, apiVersion, maxTokens } = geminiProArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -54,6 +55,7 @@ export const GeminiProStream = async (parent: TParent, args: Record<string, any>
                     messages,
                     apiKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
                     apiVersion,
                     isStream: true,
                     completeHandler: ({ content, status }) => {

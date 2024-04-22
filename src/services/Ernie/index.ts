@@ -44,7 +44,8 @@ export const ErnieStream = async (parent: TParent, args: Record<string, any>, co
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const ernieArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, secretKey, model } = ernieArgs || {}
+        const { messages: appendMessages, apiKey, secretKey, model, maxTokens } = ernieArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -56,6 +57,7 @@ export const ErnieStream = async (parent: TParent, args: Record<string, any>, co
                     apiKey,
                     secretKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
                     isStream: true,
                     completeHandler: ({ content, status }) => {
                         stop()

@@ -41,7 +41,8 @@ export const GroqStream = async (parent: TParent, args: Record<string, any>, con
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const groqArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, model } = groqArgs || {}
+        const { messages: appendMessages, apiKey, model, maxTokens } = groqArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -52,6 +53,7 @@ export const GroqStream = async (parent: TParent, args: Record<string, any>, con
                     messages,
                     apiKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
                     isStream: true,
                     completeHandler: ({ content, status }) => {
                         stop()

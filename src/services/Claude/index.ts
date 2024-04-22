@@ -41,7 +41,8 @@ export const ClaudeStream = async (parent: TParent, args: Record<string, any>, c
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const claudeArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, model } = claudeArgs || {}
+        const { messages: appendMessages, apiKey, model, maxTokens } = claudeArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -52,6 +53,7 @@ export const ClaudeStream = async (parent: TParent, args: Record<string, any>, c
                     messages,
                     apiKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
                     isStream: true,
                     completeHandler: ({ content, status }) => {
                         stop()

@@ -43,7 +43,8 @@ export const AzureOpenaiStream = async (parent: TParent, args: Record<string, an
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const azureOpenaiArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, model } = azureOpenaiArgs || {}
+        const { messages: appendMessages, apiKey, model, maxTokens, endpoint } = azureOpenaiArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -54,6 +55,8 @@ export const AzureOpenaiStream = async (parent: TParent, args: Record<string, an
                     messages,
                     apiKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
+                    endpoint,
                     isStream: true,
                     completeHandler: ({ content, status }) => {
                         stop()

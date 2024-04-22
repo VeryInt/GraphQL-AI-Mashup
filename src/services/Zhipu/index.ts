@@ -41,7 +41,8 @@ export const ZhipuStream = async (parent: TParent, args: Record<string, any>, co
     const xvalue = new Repeater<String>(async (push, stop) => {
         const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
         const zhipuArgs = args?.params || {}
-        const { messages: appendMessages, apiKey, model } = zhipuArgs || {}
+        const { messages: appendMessages, apiKey, model, maxTokens } = zhipuArgs || {}
+        const maxTokensUse = maxTokens || baseMaxTokens
         const messages = _.concat([], baseMessages || [], appendMessages || []) || []
         const key = `${messages.at(-1)?.content || ''}_stream`
 
@@ -52,6 +53,7 @@ export const ZhipuStream = async (parent: TParent, args: Record<string, any>, co
                     messages,
                     apiKey,
                     model,
+                    maxOutputTokens: maxTokensUse,
                     isStream: true,
                     completeHandler: ({ content, status }) => {
                         stop()
