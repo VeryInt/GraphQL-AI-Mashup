@@ -5,7 +5,7 @@ import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
 
-const DEFAULT_MODEL_NAME = 'gpt-3.5-turbo' // deploymentId
+const DEFAULT_MODEL_NAME = 'gpt-35-turbo' // deploymentId
 
 const convertMessages = (messages: ICommonDalArgs['messages']) => {
     let history = _.map(messages, message => {
@@ -31,7 +31,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
         streamHandler,
     } = params || {}
     const ENDPOINT = endpoint || process?.env?.AZURE_OPENAI_ENDPOINT || ''
-    const API_KEY = apiKey || process?.env?.OPENAI_API_KEY || ''
+    const API_KEY = apiKey || process?.env?.AZURE_OPENAI_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {
@@ -46,7 +46,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
     if (isStream) {
         try {
             const completion = await client.streamChatCompletions(modelUse, history, {
-                maxTokens: maxOutputTokens,
+                maxTokens: max_tokens,
             })
 
             let content = ``
@@ -77,7 +77,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
         let msg = ''
         try {
             const result = await client.getChatCompletions(modelUse, history, {
-                maxTokens: maxOutputTokens,
+                maxTokens: max_tokens,
             })
             msg = result?.choices?.[0]?.message?.content || ''
         } catch (e) {
@@ -103,7 +103,7 @@ const loaderAzureOpenai = async (ctx: TBaseContext, args: ICommonDalArgs, key: s
                 const azureOpenaiAnswerList = await Promise.all(
                     keys.map(key =>
                         fetchAzureOpenai(ctx, {
-                            ...ctx.loaderOpenaiArgs[key],
+                            ...ctx.loaderAzureOpenaiArgs[key],
                         })
                     )
                 )
