@@ -1,6 +1,6 @@
 // import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { ICommonDalArgs, Roles } from '../../types'
+import { ICommonDalArgs, Roles, IAzureOpenaiArgs } from '../../types'
 import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
@@ -90,7 +90,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
     }
 }
 
-const loaderAzureOpenai = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) => {
+const loaderAzureOpenai = async (ctx: TBaseContext, args: IAzureOpenaiArgs, key: string) => {
     ctx.loaderAzureOpenaiArgs = {
         ...ctx.loaderAzureOpenaiArgs,
         [key]: args,
@@ -109,7 +109,7 @@ const loaderAzureOpenai = async (ctx: TBaseContext, args: ICommonDalArgs, key: s
                 )
                 return azureOpenaiAnswerList
             } catch (e) {
-                console.log(`[loaderOpenai] error: ${e}`)
+                console.log(`[loaderAzureOpenai] error: ${e}`)
             }
             return new Array(keys.length || 1).fill({ status: false })
         })

@@ -25,7 +25,7 @@ const typeDefinitions = `
 export const AzureOpenai = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
     const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
     const azureOpenaiArgs = args?.params || {}
-    const { messages: appendMessages, apiKey, model, maxTokens } = azureOpenaiArgs || {}
+    const { messages: appendMessages, apiKey, model, maxTokens, endpoint } = azureOpenaiArgs || {}
     const maxTokensUse = maxTokens || baseMaxTokens
     const messages = _.concat([], baseMessages || [], appendMessages || []) || []
     const key = messages.at(-1)?.content
@@ -34,7 +34,7 @@ export const AzureOpenai = async (parent: TParent, args: Record<string, any>, co
         return { text: '' }
     }
     const text: any = await (
-        await AzureOpenaiDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse }, key)
+        await AzureOpenaiDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse, endpoint }, key)
     ).load(key)
     return { text }
 }

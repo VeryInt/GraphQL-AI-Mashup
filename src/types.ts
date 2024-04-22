@@ -26,3 +26,7 @@ export interface IGeminiProDalArgs extends ICommonDalArgs {
 export interface IErnieDalArgs extends ICommonDalArgs {
     secretKey?: string
 }
+
+export interface IAzureOpenaiArgs extends ICommonDalArgs {
+    endpoint?: string
+}
