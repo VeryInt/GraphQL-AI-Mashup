@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
+    "cf:build": "webpack --entry ./src/cf.ts",
     "build": "webpack",
     "dockerbuild": "webpack --entry ./src/main.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
