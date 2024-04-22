@@ -14,6 +14,8 @@ const typeDefinitions = `
         messages: Message
         "API_KEY"
         apiKey: String
+        "ENDPOINT"
+        endpoint: String
         "Model Name"
         model: String
         "Max Tokens"
