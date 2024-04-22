@@ -73,8 +73,11 @@ http://localhost:4000/
 
 部署完成后,即可访问您的应用程序。
 
+
 ### Cloudflare
 本项目也可部署至 Cloudflare worker。请根据以下步骤实施。
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/VeryInt/GraphQL-AI-Mashup)
 
 安装并登录 wrangler
 ```bash

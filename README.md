@@ -78,8 +78,11 @@ This project can be deployed to Vercel with a single click. Click the button bel
 After the deployment is complete, you can access your application.
 
 
+
 ### Cloudflare
 This project can be deployed to Cloudflare worker also. Please follow the steps.
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/VeryInt/GraphQL-AI-Mashup)
 
 Install and configure wrangler
 ```bash
