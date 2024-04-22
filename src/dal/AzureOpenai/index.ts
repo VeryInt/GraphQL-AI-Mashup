@@ -44,35 +44,33 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
     console.log(`isStream`, isStream)
 
     if (isStream) {
-        try {
-            const completion = await client.streamChatCompletions(modelUse, history, {
-                maxTokens: max_tokens,
-            })
-
-            let content = ``
-            for await (const chunk of completion) {
-                const text = chunk.choices?.[0]?.delta?.content || ``
-                console.log(`Azure Openai text`, text)
-                if (text) {
-                    streamHandler({
-                        token: text,
-                        status: true,
-                    })
-                    content += text
-                }
-            }
-            completeHandler({
-                content: content,
-                status: true,
-            })
-        } catch (e) {
-            console.log(`Azure Openai error`, e)
-
-            completeHandler({
-                content: '',
-                status: false,
-            })
-        }
+        // try {
+        //     const completion = await client.streamChatCompletions(modelUse, history, {
+        //         maxTokens: max_tokens,
+        //     })
+        //     let content = ``
+        //     for await (const chunk of completion) {
+        //         const text = chunk.choices?.[0]?.delta?.content || ``
+        //         console.log(`Azure Openai text`, text)
+        //         if (text) {
+        //             streamHandler({
+        //                 token: text,
+        //                 status: true,
+        //             })
+        //             content += text
+        //         }
+        //     }
+        //     completeHandler({
+        //         content: content,
+        //         status: true,
+        //     })
+        // } catch (e) {
+        //     console.log(`Azure Openai error`, e)
+        //     completeHandler({
+        //         content: '',
+        //         status: false,
+        //     })
+        // }
     } else {
         let msg = ''
         try {
