@@ -73,6 +73,30 @@ http://localhost:4000/
 
 部署完成后,即可访问您的应用程序。
 
+### Cloudflare
+本项目也可部署至 Cloudflare worker。请根据以下步骤实施。
+
+安装并登录 wrangler
+```bash
+npm install -g wrangler
+
+wrangler login
+```
+
+克隆当前仓库
+```bash
+git clone git@github.com:VeryInt/GraphQL-AI-Mashup.git
+```
+
+Build 并部署至您的 Cloudflare Worker
+```bash
+cd GraphQL-AI-Mashup
+
+wrangler build
+
+wrangler deploy
+```
+
 ## 使用示例
 以下是一个使用 GraphQL 访问 GeminiPro 接口的示例:
 #### Query

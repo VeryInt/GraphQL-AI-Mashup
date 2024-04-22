@@ -77,6 +77,32 @@ This project can be deployed to Vercel with a single click. Click the button bel
 
 After the deployment is complete, you can access your application.
 
+
+### Cloudflare
+This project can be deployed to Cloudflare worker also. Please follow the steps.
+
+Install and configure wrangler
+```bash
+npm install -g wrangler
+
+wrangler login
+```
+
+clone this repository
+```bash
+git clone git@github.com:VeryInt/GraphQL-AI-Mashup.git
+```
+
+Build and deploy your Cloudflare Worker
+```bash
+cd GraphQL-AI-Mashup
+
+wrangler build
+
+wrangler deploy
+```
+
+
 ## Usage Examples
 The following is an example of using GraphQL to access the GeminiPro interface:
 #### Query
