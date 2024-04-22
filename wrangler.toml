@@ -1,0 +1,6 @@
+compatibility_date = "2022-11-30"
+name = "graphql-ai-mashup"
+account_id = ""
+workers_dev = true
+main = "src/cf.ts"
+compatibility_flags = ["streams_enable_constructors"]
