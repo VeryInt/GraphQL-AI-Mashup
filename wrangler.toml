@@ -2,5 +2,4 @@ compatibility_date = "2022-11-30"
 name = "graphql-ai-mashup"
 workers_dev = true
 main = "src/cf.ts"
-pages_build_output_dir="dist"
 compatibility_flags = ["streams_enable_constructors"]
