@@ -31,7 +31,8 @@ const fetchQwen = async (ctx: TBaseContext, params: Record<string, any>, options
         completeHandler,
         streamHandler,
     } = params || {}
-    const API_KEY = apiKey || process?.env?.QWEN_API_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    const API_KEY = apiKey || env?.QWEN_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
 

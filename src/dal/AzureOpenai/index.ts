@@ -30,8 +30,9 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
         completeHandler,
         streamHandler,
     } = params || {}
-    const ENDPOINT = endpoint || process?.env?.AZURE_OPENAI_ENDPOINT || ''
-    const API_KEY = apiKey || process?.env?.AZURE_OPENAI_API_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    const ENDPOINT = endpoint || env?.AZURE_OPENAI_ENDPOINT || ''
+    const API_KEY = apiKey || env?.AZURE_OPENAI_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {

@@ -25,8 +25,9 @@ const convertMessages = (messages: IErnieDalArgs['messages']) => {
 
 const getAccessToken = async ({ apiKey, secretKey }: { apiKey?: string; secretKey?: string }) => {
     let accessToken = ''
-    secretKey = secretKey || process?.env?.ERNIE_SECRET_KEY || ''
-    apiKey = apiKey || process?.env?.ERNIE_API_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    secretKey = secretKey || env?.ERNIE_SECRET_KEY || ''
+    apiKey = apiKey || env?.ERNIE_API_KEY || ''
     if (!secretKey || !apiKey) return ''
 
     let url = `${baseHost}/oauth/2.0/token?`
@@ -62,8 +63,9 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         completeHandler,
         streamHandler,
     } = params || {}
-    const API_KEY = apiKey || process?.env?.ERNIE_API_KEY || ''
-    const SECRET_KEY = secretKey || process?.env?.ERNIE_SECRET_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    const API_KEY = apiKey || env?.ERNIE_API_KEY || ''
+    const SECRET_KEY = secretKey || env?.ERNIE_SECRET_KEY || ''
     const modelUse = (modelName || DEFAULT_MODEL_NAME).toLowerCase()
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY || !SECRET_KEY) {

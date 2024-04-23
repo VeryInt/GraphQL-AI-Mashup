@@ -28,7 +28,8 @@ const fetchGroq = async (ctx: TBaseContext, params: Record<string, any>, options
         completeHandler,
         streamHandler,
     } = params || {}
-    const API_KEY = apiKey || process?.env?.GROQ_API_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    const API_KEY = apiKey || env?.GROQ_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {

@@ -29,7 +29,8 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
         completeHandler,
         streamHandler,
     } = params || {}
-    const API_KEY = apiKey || process?.env?.OPENAI_API_KEY || ''
+    const env = (typeof process != 'undefined' && process?.env) || {}
+    const API_KEY = apiKey || env?.OPENAI_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME
     const max_tokens = maxOutputTokens || generationConfig.maxOutputTokens
     if (_.isEmpty(messages) || !API_KEY) {
