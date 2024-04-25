@@ -11,10 +11,9 @@ import { useDeferStream } from '@graphql-yoga/plugin-defer-stream'
  * ==========> 👆 it doesn't work for deploying yoga-server in Vercel,
  * ==========> 👆 but it works for yoga as an api in nextjs!!!
  */
-// export const config = {
-//     runtime: 'edge',
-// }
-export const runtime = 'edge'
+export const config = {
+    runtime: 'edge',
+}
 
 const { handleRequest } = createYoga({
     schema,

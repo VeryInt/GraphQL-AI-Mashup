@@ -1,16 +1,15 @@
 {
   "version": 2,
-  "buildCommand": "npm run build",
   "outputDirectory": "api",
   "functions": {
-      "api/vercel-graphql-yoga.js":{
+      "api/vercel-graphql.ts":{
         "memory": 1024
       }
     },
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "api/vercel-graphql-yoga.js"
+      "dest": "api/vercel-graphql.ts"
     }
   ]
 }
