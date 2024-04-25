@@ -11,6 +11,3 @@ dist/
 .vercel
 
 .wrangler
-
-api/*.txt
-api/index.js
