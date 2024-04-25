@@ -5,8 +5,8 @@
   "main": "index.ts",
   "scripts": {
     "deploy": "wrangler deploy",
-    "build": "webpack",
-    "dockerbuild": "webpack --entry ./src/main.ts",
+    "build": "webpack --output-path ./api",
+    "dockerbuild": "webpack --entry ./src/main.ts --output-path ./dist",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "cross-env NODE_ENV=development ts-node-dev --exit-child --respawn src/main.ts",
     "start": "node -r ts-node/register --env-file=.env src/main.ts",
