@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './src/index.ts',
   target: 'node',
+  mode: "production",
   module: {
     rules: [
       {
@@ -18,6 +19,6 @@ module.exports = {
   output: {
     filename: 'index.js',
     libraryTarget: 'commonjs2',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'api')
   }
 };
