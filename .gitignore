@@ -11,3 +11,4 @@ dist/
 .vercel
 
 api/*.txt
+api/vercel-graphql-yoga.js

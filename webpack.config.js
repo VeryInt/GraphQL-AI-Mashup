@@ -17,7 +17,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js']
   },
   output: {
-    filename: 'index.js',
+    filename: 'vercel-graphql-yoga.js',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'api')
   }
