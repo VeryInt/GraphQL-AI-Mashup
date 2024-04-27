@@ -8,6 +8,8 @@ export enum Roles {
 export interface IMessage {
     role: Roles
     content: string
+    tool_call_id?: string | undefined
+    name?: string | undefined
 }
 
 export interface ICommonDalArgs {
