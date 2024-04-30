@@ -18,6 +18,7 @@ export interface ICommonDalArgs {
     apiKey?: string
     isStream?: boolean
     maxOutputTokens?: number
+    searchWeb?: boolean
     completeHandler?: (params: { content: string; status: boolean }) => void
     streamHandler?: (params: { token: string; status: boolean }) => void
 }

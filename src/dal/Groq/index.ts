@@ -154,12 +154,14 @@ const fetchGroq = async (ctx: TBaseContext, params: Record<string, any>, options
                 const searchText = JSON.parse(
                     result?.choices?.[0]?.message?.tool_calls?.[0]?.function?.arguments || '{}'
                 ).searchText
-                // const searchResults = await DDG.search(searchText, {
-                //     safeSearch: DDG.SafeSearchType.STRICT,
-                //     time: DDG.SearchTimeType.WEEK,
-                //     locale: 'zh-cn',
-                // })
-                const searchResults = { results: [{ title: ``, description: `` }] }
+                const searchResults = await DDG.search(searchText, {
+                    safeSearch: DDG.SafeSearchType.OFF,
+                    // time: DDG.SearchTimeType.WEEK,
+                    // time: "2024-04-01..2024-04-30",
+                    locale: 'zh-cn',
+                })
+                console.log(`searchResults by searchText: ${searchText}`, searchResults)
+                // const searchResults = { results: [{ title: ``, description: `` }] }
                 // @ts-ignore
                 history.push(result?.choices?.[0].message)
                 history.push({
@@ -174,7 +176,7 @@ const fetchGroq = async (ctx: TBaseContext, params: Record<string, any>, options
                     ).join('\n\n'),
                 })
 
-                console.log(`latest history`, history)
+                // console.log(`latest history`, history)
                 const newResult = await groq.chat.completions.create({
                     model: modelUse,
                     max_tokens,

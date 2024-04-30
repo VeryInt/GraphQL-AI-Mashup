@@ -21,6 +21,8 @@ const typeDefinitions = `
         messages: [Message]
         "Max Tokens"
         maxTokens: Int
+        "Need Search Internet"
+        searchWeb: Boolean
     }
 `
 

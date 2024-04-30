@@ -23,7 +23,7 @@ const convertMessages = (messages: ICommonDalArgs['messages']) => {
 }
 
 const getAuthToken = async ({ apiKey }: { apiKey: string }): Promise<string> => {
-    const [key, secret] = apiKey.split('.')
+    const [key, secret] = apiKey?.split('.')
     const now = Date.now()
     let authToken = ''
     const payload = { api_key: key, exp: now + 10000, timestamp: now }
