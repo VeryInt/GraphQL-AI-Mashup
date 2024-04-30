@@ -1,13 +1,20 @@
 // import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { ICommonDalArgs, Roles, IAzureOpenaiArgs } from '../../types'
+import { ICommonDalArgs, Roles, IAzureOpenaiArgs, IMessage } from '../../types'
 import { OpenAIClient, AzureKeyCredential } from '@azure/openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
+import { getInternetSerchResult } from '../../utils/tools'
+import { searchWebSystemMessage, searchWebTool } from '../../utils/constants'
+import { ChatCompletionsFunctionToolCall } from '@azure/openai'
 
-const DEFAULT_MODEL_NAME = 'gpt-35-turbo' // deploymentId
+const availableFunctions: Record<string, any> = {
+    get_internet_serch_result: getInternetSerchResult,
+}
 
-const convertMessages = (messages: ICommonDalArgs['messages']) => {
+const DEFAULT_MODEL_NAME = `gpt-35-turbo` //'gpt-4'// 'gpt-35-turbo' // deploymentId
+
+const convertMessages = (messages: ICommonDalArgs['messages']): { history: IMessage[] } => {
     let history = _.map(messages, message => {
         return {
             role: message.role == Roles.model ? Roles.assistant : message.role,
@@ -29,6 +36,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
         maxOutputTokens,
         completeHandler,
         streamHandler,
+        searchWeb,
     } = params || {}
     const env = (typeof process != 'undefined' && process?.env) || {}
     const ENDPOINT = endpoint || env?.AZURE_OPENAI_ENDPOINT || ''
@@ -41,6 +49,12 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
     const { history } = convertMessages(messages)
 
     const client = new OpenAIClient(ENDPOINT, new AzureKeyCredential(API_KEY))
+
+    let tools: any[] = []
+    if (searchWeb) {
+        history.unshift(searchWebSystemMessage)
+        tools = [searchWebTool]
+    }
 
     console.log(`isStream`, isStream)
 
@@ -77,10 +91,44 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
     } else {
         let msg = ''
         try {
-            const result = await client.getChatCompletions(modelUse, history, {
-                maxTokens: max_tokens,
-            })
-            msg = result?.choices?.[0]?.message?.content || ''
+            if (searchWeb) {
+                const firstRoundResult = await client.getChatCompletions(modelUse, history, {
+                    maxTokens: max_tokens,
+                    toolChoice: 'auto',
+                    tools,
+                })
+                const firstRoundMessage = firstRoundResult?.choices?.[0]?.message
+                if (firstRoundMessage?.toolCalls && !_.isEmpty(firstRoundMessage.toolCalls)) {
+                    // @ts-ignore
+                    history.push(firstRoundMessage)
+                    for (const toolCall of firstRoundMessage.toolCalls as ChatCompletionsFunctionToolCall[]) {
+                        const { name: functionName, arguments: funArgs } = toolCall.function || {}
+                        const functionToCall = availableFunctions[functionName]
+                        const functionArgs = JSON.parse(funArgs?.match(/\{(?:[^{}]*)*\}/g)?.[0] || '{}')
+                        console.log(`functionArgs`, functionArgs)
+                        const functionResponse = await functionToCall(functionArgs.searchText, functionArgs.count)
+                        history.push({
+                            toolCallId: toolCall.id,
+                            // @ts-ignore
+                            role: 'tool',
+                            name: functionName,
+                            content: functionResponse,
+                        })
+                    }
+                    const secondResult = await client.getChatCompletions(modelUse, history, {
+                        maxTokens: max_tokens,
+                    })
+
+                    msg = secondResult?.choices?.[0]?.message?.content || ''
+                } else {
+                    msg = firstRoundMessage?.content || ''
+                }
+            } else {
+                const result = await client.getChatCompletions(modelUse, history, {
+                    maxTokens: max_tokens,
+                })
+                msg = result?.choices?.[0]?.message?.content || ''
+            }
         } catch (e) {
             console.log(`azure openai error`, e)
             msg = String(e)

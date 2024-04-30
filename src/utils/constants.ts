@@ -29,10 +29,11 @@ export const searchWebTool = {
                     description: 'The text to search',
                 },
                 count: {
-                    type: 'int',
+                    type: 'number',
                     description: 'The search result count',
                 },
             },
+            required: ['searchText'],
         },
     },
 }

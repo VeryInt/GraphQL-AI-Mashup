@@ -40,7 +40,7 @@ export const Moonshot = async (parent: TParent, args: Record<string, any>, conte
 
 export const MoonshotStream = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
     const xvalue = new Repeater<String>(async (push, stop) => {
-        const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
+        const { messages: baseMessages, maxTokens: baseMaxTokens, searchWeb } = parent || {}
         const moonshotArgs = args?.params || {}
         const { messages: appendMessages, apiKey, model, maxTokens } = moonshotArgs || {}
         const maxTokensUse = maxTokens || baseMaxTokens
@@ -56,6 +56,7 @@ export const MoonshotStream = async (parent: TParent, args: Record<string, any>,
                     model,
                     maxOutputTokens: maxTokensUse,
                     isStream: true,
+                    searchWeb,
                     completeHandler: ({ content, status }) => {
                         stop()
                     },
