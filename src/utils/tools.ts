@@ -1,5 +1,6 @@
 import { IMessage, Roles } from '../types'
 import _ from 'lodash'
+import * as DDG from 'duck-duck-scrape'
 
 export const mergeMessages = (messages: IMessage[] | undefined): IMessage[] => {
     const mergedMessages: IMessage[] = []
@@ -77,4 +78,22 @@ export const fetchEventStream = async ({
         // 继续读取下一个数据块
         reader.read().then(processStream)
     })
+}
+
+export const sleep = (sec: number) => new Promise(resolve => setTimeout(resolve, sec * 1000))
+
+export const getInternetSerchResult = async (searchText: string, count?: number): Promise<string> => {
+    const searchResults = await DDG.search(searchText, {
+        safeSearch: DDG.SafeSearchType.OFF,
+        // time: "2024-04-01..2024-04-30", // DDG.SearchTimeType.WEEK,
+        locale: 'zh-cn',
+    })
+
+    const result = _.map(
+        searchResults.results.splice(0, count && count > 0 ? count : 10),
+        (result, index) => `${index + 1}. title: ${result.title}\n description: ${result.description}`
+    ).join('\n\n')
+
+    console.log(`🐹🐹🐹 getInternetSerchResult: ${result}`)
+    return result
 }

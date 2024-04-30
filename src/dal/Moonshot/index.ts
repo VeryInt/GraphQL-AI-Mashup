@@ -1,15 +1,20 @@
 // import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { ICommonDalArgs, Roles } from '../../types'
+import { ICommonDalArgs, IMessage, Roles } from '../../types'
 import OpenAI from 'openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
-import * as DDG from 'duck-duck-scrape'
+import { sleep, getInternetSerchResult } from '../../utils/tools'
+import { searchWebSystemMessage, searchWebTool } from '../../utils/constants'
 
 const DEFAULT_MODEL_NAME = 'moonshot-v1-8k'
 const baseUrl = 'https://api.moonshot.cn/v1'
 
-const convertMessages = (messages: ICommonDalArgs['messages']) => {
+const availableFunctions: Record<string, any> = {
+    get_internet_serch_result: getInternetSerchResult,
+}
+
+const convertMessages = (messages: ICommonDalArgs['messages']): { history: IMessage[] } => {
     let history = _.map(messages, message => {
         return {
             role: message.role == Roles.model ? Roles.assistant : message.role,
@@ -55,35 +60,10 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
 
     let tools: any[] = []
     if (searchWeb) {
-        history.unshift({
-            role: Roles.system,
-            content: `你是一个具有联网功能的智能助手，如果用户的提问的内容可以通过联网获取更新信息，你就一定会使用 get_internet_serch_result tool 来获取相关联网资料，再根据资料结合用户的提问来回答。`,
-        })
-        tools = [
-            {
-                type: 'function',
-                function: {
-                    name: 'get_internet_serch_result',
-                    description: 'Get the latest search results from DuckDuckGo',
-                    parameters: {
-                        type: 'object',
-                        properties: {
-                            searchText: {
-                                type: 'string',
-                                description: 'The text to search',
-                            },
-                            count: {
-                                type: 'int',
-                                description: 'The search result count',
-                            },
-                        },
-                    },
-                },
-            },
-        ]
-        // chatParams.messages = history;
-        // chatParams.tools = tools;
+        history.unshift(searchWebSystemMessage)
+        tools = [searchWebTool]
     }
+
     console.log(`isStream`, isStream)
 
     if (isStream) {
@@ -135,38 +115,24 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
                     tools,
                 })
                 const firstRoundMessage = firstRoundResult?.choices?.[0]?.message
-                const firstRoundFunction = firstRoundMessage?.tool_calls?.[0]?.function
-                console.log(`firstRoundMessage`, firstRoundMessage)
-                console.log(`firstRoundFunction`, firstRoundFunction)
-                if (firstRoundFunction?.name === 'get_internet_serch_result') {
-                    let returnArguments = firstRoundFunction?.arguments || '{}'
-                    if (returnArguments.includes(`: null\n}`)) {
-                        returnArguments = returnArguments.replace(`": null\n}`, '').replace(/^{\n\s+"/, '')
-                    }
-                    console.log(`returnArguments`, returnArguments)
-                    const searchText = JSON.parse(returnArguments).searchText
-                    const searchResults = await DDG.search(searchText, {
-                        safeSearch: DDG.SafeSearchType.OFF,
-                        // time: DDG.SearchTimeType.WEEK,
-                        // time: "2024-04-01..2024-04-30",
-                        locale: 'zh-cn',
-                    })
-                    console.log(`searchResults by searchText: ${searchText}`, searchResults)
+                if (firstRoundMessage?.tool_calls && !_.isEmpty(firstRoundMessage.tool_calls)) {
                     // @ts-ignore
                     history.push(firstRoundMessage)
-                    history.push({
-                        // @ts-ignore
-                        role: 'tool',
-                        // @ts-ignore
-                        tool_call_id: firstRoundMessage?.tool_calls?.[0]?.id,
-                        name: firstRoundFunction?.name,
-                        content: _.map(
-                            searchResults.results.splice(0, 10),
-                            (result, index) =>
-                                `${index + 1}. title: ${result.title}\n description: ${result.description}`
-                        ).join('\n\n'),
-                    })
-
+                    for (const toolCall of firstRoundMessage.tool_calls) {
+                        const { name: functionName, arguments: funArgs } = toolCall.function || {}
+                        const functionToCall = availableFunctions[functionName]
+                        console.log(`🐹🐹🐹 funArgs`, funArgs?.match(/\{(?:[^{}]*)*\}/g)?.[0])
+                        const functionArgs = JSON.parse(funArgs?.match(/\{(?:[^{}]*)*\}/g)?.[0] || '{}')
+                        console.log(`functionArgs`, functionArgs)
+                        const functionResponse = await functionToCall(functionArgs.searchText, functionArgs.count)
+                        history.push({
+                            tool_call_id: toolCall.id,
+                            // @ts-ignore
+                            role: 'tool',
+                            name: functionName,
+                            content: functionResponse,
+                        })
+                    }
                     const secondResult = await openai.chat.completions.create({
                         model: modelUse,
                         max_tokens,
@@ -179,16 +145,16 @@ const fetchMoonshot = async (ctx: TBaseContext, params: Record<string, any>, opt
                 } else {
                     msg = firstRoundMessage?.content || ''
                 }
+            } else {
+                const result = await openai.chat.completions.create({
+                    model: modelUse,
+                    max_tokens,
+                    temperature: 0,
+                    // @ts-ignore
+                    messages: history,
+                })
+                msg = result?.choices?.[0]?.message?.content || ''
             }
-
-            const result = await openai.chat.completions.create({
-                model: modelUse,
-                max_tokens,
-                temperature: 0,
-                // @ts-ignore
-                messages: history,
-            })
-            msg = result?.choices?.[0]?.message?.content || ''
         } catch (e) {
             console.log(`moonshot error`, e)
             msg = String(e)
