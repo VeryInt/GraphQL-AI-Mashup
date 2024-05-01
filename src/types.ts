@@ -12,6 +12,11 @@ export interface IMessage {
     name?: string | undefined
 }
 
+export interface IClaudeMessage {
+    role: Roles
+    content: { type: string; text: string }[]
+}
+
 export interface ICommonDalArgs {
     messages?: IMessage[]
     model?: string
