@@ -59,7 +59,7 @@ export const fetchEventStream = async ({
             completeHandler()
             return
         }
-        const chunk = new TextDecoder().decode(value) // 解码流中的数据
+        const chunk = value ? new TextDecoder().decode(value) : '' // 解码流中的数据
         console.log(`singleChunk`, chunk)
         eventStreamBuffer += chunk
 

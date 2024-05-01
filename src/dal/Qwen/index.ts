@@ -82,20 +82,94 @@ const fetchQwen = async (ctx: TBaseContext, params: Record<string, any>, options
     if (isStream) {
         requestOptions.headers.Accept = `text/event-stream`
         let totalContent = ``
+        let message: Record<string, any>
         try {
             fetchEventStream({
                 url: requestUrl,
                 options: requestOptions,
                 regex: /^.*?data:/gs,
-                completeHandler: () => {
+                completeHandler: async () => {
                     console.log(`totalContent`, totalContent)
-                    completeHandler({
-                        content: `closed`,
-                        status: true,
-                    })
+                    if (searchWeb && message?.output?.choices) {
+                        const firstRoundChoices = message.output.choices
+                        const needTools = _.filter(firstRoundChoices, r => r.finish_reason == `tool_calls`)
+                        if (needTools?.length) {
+                            for (const toolChoice of needTools) {
+                                const tool_calls = toolChoice?.message?.tool_calls
+                                if (tool_calls?.length) {
+                                    history.push(toolChoice?.message)
+                                    for (const toolCall of tool_calls) {
+                                        console.log(`toolCall`, toolCall)
+                                        const { name: functionName, arguments: funArgs } = toolCall.function || {}
+                                        const functionToCall = availableFunctions[functionName]
+                                        const functionArgs = JSON.parse(funArgs?.match(/\{(?:[^{}]*)*\}/g)?.[0] || '{}')
+                                        streamHandler({
+                                            token: `正在查询 ${functionArgs.searchText}...`,
+                                            status: true,
+                                        })
+                                        const functionResponse = await functionToCall(
+                                            functionArgs.searchText,
+                                            functionArgs.count
+                                        )
+                                        history.push({
+                                            toolCallId: toolCall.id,
+                                            // @ts-ignore
+                                            role: 'tool',
+                                            name: functionName,
+                                            content: functionResponse,
+                                        })
+                                    }
+                                }
+                            }
+                            fetchEventStream({
+                                url: requestUrl,
+                                options: {
+                                    ...requestOptions,
+                                    body: JSON.stringify({
+                                        ...body,
+                                        parameters: {
+                                            ...body.parameters,
+                                            tools: undefined,
+                                        },
+                                        input: {
+                                            messages: history,
+                                        },
+                                    }),
+                                },
+                                regex: /^.*?data:/gs,
+                                completeHandler: () => {
+                                    completeHandler({
+                                        content: `closed`,
+                                        status: true,
+                                    })
+                                },
+                                streamHandler: data => {
+                                    const resultJson = JSON.parse(data)
+                                    message = resultJson
+                                    // qwen的sse是每次新消息返回的内容是全部拼接在一起的
+                                    const newContent = resultJson?.output?.choices?.[0]?.message?.content || ``
+                                    const token = newContent.replace(totalContent, '')
+                                    totalContent = newContent
+                                    console.log(`token`, token)
+                                    if (token) {
+                                        streamHandler({
+                                            token,
+                                            status: true,
+                                        })
+                                    }
+                                },
+                            })
+                        }
+                    } else {
+                        completeHandler({
+                            content: `closed`,
+                            status: true,
+                        })
+                    }
                 },
                 streamHandler: data => {
                     const resultJson = JSON.parse(data)
+                    message = resultJson
                     // qwen的sse是每次新消息返回的内容是全部拼接在一起的
                     const newContent = resultJson?.output?.choices?.[0]?.message?.content || ``
                     const token = newContent.replace(totalContent, '')
