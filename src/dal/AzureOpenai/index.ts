@@ -12,8 +12,8 @@ const availableFunctions: Record<string, any> = {
     get_internet_serch_result: getInternetSerchResult,
 }
 
-// const DEFAULT_MODEL_NAME = `gpt-35-turbo`  // deploymentId
-const DEFAULT_MODEL_NAME = `gpt-4`
+const DEFAULT_MODEL_NAME = `gpt-35-turbo` // deploymentId
+// const DEFAULT_MODEL_NAME = `gpt-4`
 
 const convertMessages = (messages: ICommonDalArgs['messages']): { history: IMessage[] } => {
     let history = _.map(messages, message => {
