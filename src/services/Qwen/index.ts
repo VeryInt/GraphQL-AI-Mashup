@@ -21,7 +21,7 @@ const typeDefinitions = `
     }
 `
 export const Qwen = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
-    const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
+    const { messages: baseMessages, maxTokens: baseMaxTokens, searchWeb } = parent || {}
     const qwenArgs = args?.params || {}
     const { messages: appendMessages, apiKey, model, maxTokens } = qwenArgs || {}
     const maxTokensUse = maxTokens || baseMaxTokens
@@ -32,14 +32,14 @@ export const Qwen = async (parent: TParent, args: Record<string, any>, context: 
         return { text: '' }
     }
     const text: any = await (
-        await QwenDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse }, key)
+        await QwenDal.loader(context, { messages, apiKey, model, maxOutputTokens: maxTokensUse, searchWeb }, key)
     ).load(key)
     return { text }
 }
 
 export const QwenStream = async (parent: TParent, args: Record<string, any>, context: TBaseContext) => {
     const xvalue = new Repeater<String>(async (push, stop) => {
-        const { messages: baseMessages, maxTokens: baseMaxTokens } = parent || {}
+        const { messages: baseMessages, maxTokens: baseMaxTokens, searchWeb } = parent || {}
         const qwenArgs = args?.params || {}
         const { messages: appendMessages, apiKey, model, maxTokens } = qwenArgs || {}
         const maxTokensUse = maxTokens || baseMaxTokens
@@ -55,6 +55,7 @@ export const QwenStream = async (parent: TParent, args: Record<string, any>, con
                     model,
                     maxOutputTokens: maxTokensUse,
                     isStream: true,
+                    searchWeb,
                     completeHandler: ({ content, status }) => {
                         stop()
                     },

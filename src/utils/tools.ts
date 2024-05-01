@@ -82,12 +82,17 @@ export const fetchEventStream = async ({
 
 export const sleep = (sec: number) => new Promise(resolve => setTimeout(resolve, sec * 1000))
 
-export const getInternetSerchResult = async (searchText: string, count?: number): Promise<string> => {
+export const getInternetSerchResult = async (
+    searchText: string,
+    count?: number,
+    timelimit?: string
+): Promise<string> => {
     const resultList = []
     const duckDuckGoSearch = new DuckDuckGoSearch()
     const searchResults = duckDuckGoSearch.text({
         keywords: searchText,
         safesearch: 'off',
+        timelimit: timelimit || '1w',
     })
     count = count || 10
     console.log(`count: ${count}, searchText: ${searchText}`)
