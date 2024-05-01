@@ -1,6 +1,6 @@
 import { IMessage, Roles } from '../types'
 import _ from 'lodash'
-const duckDuckGoSearch = require('../lib/duckduckgoSearch')
+import DuckDuckGoSearch from '../lib/duckduckgoSearch'
 
 export const mergeMessages = (messages: IMessage[] | undefined): IMessage[] => {
     const mergedMessages: IMessage[] = []
@@ -84,7 +84,11 @@ export const sleep = (sec: number) => new Promise(resolve => setTimeout(resolve,
 
 export const getInternetSerchResult = async (searchText: string, count?: number): Promise<string> => {
     const resultList = []
-    const searchResults = duckDuckGoSearch.text(searchText)
+    const duckDuckGoSearch = new DuckDuckGoSearch()
+    const searchResults = duckDuckGoSearch.text({
+        keywords: searchText,
+        safesearch: 'off',
+    })
     count = count || 10
     console.log(`count: ${count}, searchText: ${searchText}`)
     let index = 0

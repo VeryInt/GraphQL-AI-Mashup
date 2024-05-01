@@ -1,12 +1,11 @@
 import _ from 'lodash'
 import { sleep } from '../../utils/tools'
 
-// Simulating the httpx._exceptions.HTTPError class
-class HTTPError extends Error {
-    constructor(message: string) {
-        super(message)
-        this.name = 'HTTPError'
-    }
+export interface ISearchText {
+    keywords: string
+    region?: string
+    safesearch?: 'moderate' | 'off' | 'on'
+    timelimit?: string | null
 }
 
 // Simulating the unescape function
@@ -35,7 +34,7 @@ class SearchApi {
         this.logger = console
     }
 
-    async *text(keywords: string, region = 'wt-wt', safesearch = 'moderate', timelimit = null) {
+    async *text({ keywords, region = 'wt-wt', safesearch = 'moderate', timelimit = null }: ISearchText) {
         if (!keywords) {
             throw new Error('Keywords are mandatory')
         }
@@ -58,7 +57,7 @@ class SearchApi {
             p: '0',
         }
 
-        safesearch = safesearch.toLowerCase()
+        safesearch = safesearch.toLowerCase() as typeof safesearch
         if (safesearch === 'moderate') {
             payload.ex = '-1'
         } else if (safesearch === 'off') {
@@ -181,4 +180,4 @@ class SearchApi {
     }
 }
 
-module.exports = new SearchApi()
+export default SearchApi
