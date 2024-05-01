@@ -25,7 +25,7 @@ const convertMessages = (messages: IErnieDalArgs['messages']) => {
 
 const getAccessToken = async ({ apiKey, secretKey }: { apiKey?: string; secretKey?: string }) => {
     let accessToken = ''
-    const env = (typeof process != 'undefined' && process?.env) || {}
+    const env = (typeof process != 'undefined' && process?.env) || ({} as NodeJS.ProcessEnv)
     secretKey = secretKey || env?.ERNIE_SECRET_KEY || ''
     apiKey = apiKey || env?.ERNIE_API_KEY || ''
     if (!secretKey || !apiKey) return ''
@@ -63,7 +63,7 @@ const fetchErnie = async (ctx: TBaseContext, params: Record<string, any>, option
         completeHandler,
         streamHandler,
     } = params || {}
-    const env = (typeof process != 'undefined' && process?.env) || {}
+    const env = (typeof process != 'undefined' && process?.env) || ({} as NodeJS.ProcessEnv)
     const API_KEY = apiKey || env?.ERNIE_API_KEY || ''
     const SECRET_KEY = secretKey || env?.ERNIE_SECRET_KEY || ''
     const modelUse = (modelName || DEFAULT_MODEL_NAME).toLowerCase()

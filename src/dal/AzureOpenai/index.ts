@@ -39,7 +39,7 @@ const fetchAzureOpenai = async (ctx: TBaseContext, params: Record<string, any>, 
         streamHandler,
         searchWeb,
     } = params || {}
-    const env = (typeof process != 'undefined' && process?.env) || {}
+    const env = (typeof process != 'undefined' && process?.env) || ({} as NodeJS.ProcessEnv)
     const ENDPOINT = endpoint || env?.AZURE_OPENAI_ENDPOINT || ''
     const API_KEY = apiKey || env?.AZURE_OPENAI_API_KEY || ''
     const modelUse = modelName || DEFAULT_MODEL_NAME

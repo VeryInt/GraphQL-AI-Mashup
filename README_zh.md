@@ -67,11 +67,7 @@ http://localhost:4000/
 
 ## 部署
 ### Vercel
-本项目可以一键部署到 Vercel。点击下方按钮即可开始部署:
-
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FVeryInt%2FGraphQL-AI-Mashup&env=GEMINI_PRO_API_KEY,CLAUDE_API_KEY,MOONSHOT_API_KEY,OPENAI_API_KEY&envDescription=API%20Keys%20for%20AI)
-
-部署完成后,即可访问您的应用程序。
+由于 Vercel 对于 edge runtime 的限制，请参考项目 [AI-Mashup-Web](https://github.com/VeryInt/AI-Mashup-Web) 进行部署
 
 
 ### Cloudflare
