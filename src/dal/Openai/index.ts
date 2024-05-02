@@ -4,6 +4,12 @@ import { IOpenaiArgs, Roles, IMessage } from '../../types'
 import OpenAI from 'openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
+import { getInternetSerchResult } from '../../utils/tools'
+import { searchWebSystemMessage, searchWebTool } from '../../utils/constants'
+
+const availableFunctions: Record<string, any> = {
+    get_internet_serch_result: getInternetSerchResult,
+}
 
 const DEFAULT_MODEL_NAME = 'gpt-3.5-turbo'
 
@@ -41,8 +47,14 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
     const { history } = convertMessages(messages)
     const openai = new OpenAI({
         apiKey: API_KEY,
-        baseURL: baseUrl || '',
+        baseURL: baseUrl || undefined,
     })
+
+    let tools: any[] = []
+    if (searchWeb) {
+        history.unshift(searchWebSystemMessage)
+        tools = [searchWebTool]
+    }
 
     console.log(`isStream`, isStream)
 
@@ -84,14 +96,54 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
     } else {
         let msg = ''
         try {
-            const result = await openai.chat.completions.create({
-                model: modelUse,
-                max_tokens,
-                temperature: 0,
-                // @ts-ignore
-                messages: history,
-            })
-            msg = result?.choices?.[0]?.message?.content || ''
+            if (searchWeb) {
+                const firstRoundResult = await openai.chat.completions.create({
+                    model: modelUse,
+                    max_tokens,
+                    temperature: 0,
+                    // @ts-ignore
+                    messages: history,
+                    tool_choice: 'auto',
+                    tools,
+                })
+                const firstRoundMessage = firstRoundResult?.choices?.[0]?.message
+                console.log(`firstRoundMessage`, firstRoundMessage)
+                if (firstRoundMessage?.tool_calls && !_.isEmpty(firstRoundMessage.tool_calls)) {
+                    //     console.log(`firstRoundMessage`, firstRoundMessage)
+                    // @ts-ignore
+                    history.push(firstRoundMessage)
+                    //     for (const toolCall of firstRoundMessage.toolCalls as ChatCompletionsFunctionToolCall[]) {
+                    //         const { name: functionName, arguments: funArgs } = toolCall.function || {}
+                    //         const functionToCall = availableFunctions[functionName]
+                    //         const functionArgs = JSON.parse(funArgs?.match(/\{(?:[^{}]*)*\}/g)?.[0] || '{}')
+                    //         console.log(`functionArgs`, functionArgs)
+                    //         const functionResponse = await functionToCall(functionArgs.searchText, functionArgs.count)
+                    //         history.push({
+                    //             toolCallId: toolCall.id,
+                    //             // @ts-ignore
+                    //             role: 'tool',
+                    //             name: functionName,
+                    //             content: functionResponse,
+                    //         })
+                    //     }
+                    //     const secondResult = await client.getChatCompletions(modelUse, history, {
+                    //         maxTokens: max_tokens,
+                    //     })
+
+                    //     msg = secondResult?.choices?.[0]?.message?.content || ''
+                } else {
+                    msg = firstRoundResult?.choices?.[0]?.message?.content || ''
+                }
+            } else {
+                const result = await openai.chat.completions.create({
+                    model: modelUse,
+                    max_tokens,
+                    temperature: 0,
+                    // @ts-ignore
+                    messages: history,
+                })
+                msg = result?.choices?.[0]?.message?.content || ''
+            }
         } catch (e) {
             console.log(`openai error`, e)
             msg = String(e)
