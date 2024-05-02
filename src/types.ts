@@ -38,3 +38,7 @@ export interface IErnieDalArgs extends ICommonDalArgs {
 export interface IAzureOpenaiArgs extends ICommonDalArgs {
     endpoint?: string
 }
+
+export interface IOpenaiArgs extends ICommonDalArgs {
+    baseUrl?: string
+}

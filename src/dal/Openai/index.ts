@@ -1,13 +1,13 @@
 // import 'dotenv/config'
 import DataLoader from 'dataloader'
-import { ICommonDalArgs, Roles } from '../../types'
+import { IOpenaiArgs, Roles, IMessage } from '../../types'
 import OpenAI from 'openai'
 import _ from 'lodash'
 import { generationConfig } from '../../utils/constants'
 
 const DEFAULT_MODEL_NAME = 'gpt-3.5-turbo'
 
-const convertMessages = (messages: ICommonDalArgs['messages']) => {
+const convertMessages = (messages: IOpenaiArgs['messages']): { history: IMessage[] } => {
     let history = _.map(messages, message => {
         return {
             role: message.role == Roles.model ? Roles.assistant : message.role,
@@ -28,6 +28,8 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
         maxOutputTokens,
         completeHandler,
         streamHandler,
+        searchWeb,
+        baseUrl,
     } = params || {}
     const env = (typeof process != 'undefined' && process?.env) || ({} as NodeJS.ProcessEnv)
     const API_KEY = apiKey || env?.OPENAI_API_KEY || ''
@@ -39,6 +41,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
     const { history } = convertMessages(messages)
     const openai = new OpenAI({
         apiKey: API_KEY,
+        baseURL: baseUrl || '',
     })
 
     console.log(`isStream`, isStream)
@@ -99,7 +102,7 @@ const fetchOpenai = async (ctx: TBaseContext, params: Record<string, any>, optio
     }
 }
 
-const loaderOpenai = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) => {
+const loaderOpenai = async (ctx: TBaseContext, args: IOpenaiArgs, key: string) => {
     ctx.loaderOpenaiArgs = {
         ...ctx.loaderOpenaiArgs,
         [key]: args,
