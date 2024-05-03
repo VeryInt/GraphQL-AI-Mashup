@@ -173,22 +173,27 @@ const loaderGroq = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) 
     }
 
     if (!ctx?.loaderGroq) {
-        ctx.loaderGroq = new DataLoader<string, string>(async keys => {
-            console.log(`loaderGroq-keys-🐹🐹🐹`, keys)
-            try {
-                const groqAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchGroq(ctx, {
-                            ...ctx.loaderGroqArgs[key],
-                        })
+        ctx.loaderGroq = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderGroq-keys-🐹🐹🐹`, keys)
+                try {
+                    const groqAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchGroq(ctx, {
+                                ...ctx.loaderGroqArgs[key],
+                            })
+                        )
                     )
-                )
-                return groqAnswerList
-            } catch (e) {
-                console.log(`[loaderGroq] error: ${e}`)
+                    return groqAnswerList
+                } catch (e) {
+                    console.log(`[loaderGroq] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderGroq
 }

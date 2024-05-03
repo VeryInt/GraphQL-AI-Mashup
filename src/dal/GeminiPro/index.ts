@@ -123,22 +123,27 @@ const loaderGeminiPro = async (ctx: TBaseContext, args: IGeminiProDalArgs, key: 
     }
 
     if (!ctx?.loaderGeminiPro) {
-        ctx.loaderGeminiPro = new DataLoader<string, string>(async keys => {
-            console.log(`loaderGeminiPro-keys-🐹🐹🐹`, keys)
-            try {
-                const geminiProAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchGeminiPro(ctx, {
-                            ...ctx.loaderGeminiProArgs[key],
-                        })
+        ctx.loaderGeminiPro = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderGeminiPro-keys-🐹🐹🐹`, keys)
+                try {
+                    const geminiProAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchGeminiPro(ctx, {
+                                ...ctx.loaderGeminiProArgs[key],
+                            })
+                        )
                     )
-                )
-                return geminiProAnswerList
-            } catch (e) {
-                console.log(`[loaderGeminiPro] error: ${e}`)
+                    return geminiProAnswerList
+                } catch (e) {
+                    console.log(`[loaderGeminiPro] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderGeminiPro
 }

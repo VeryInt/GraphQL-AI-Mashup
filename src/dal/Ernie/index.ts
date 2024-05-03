@@ -162,22 +162,27 @@ const loaderErnie = async (ctx: TBaseContext, args: IErnieDalArgs, key: string) 
     }
 
     if (!ctx?.loaderErnie) {
-        ctx.loaderErnie = new DataLoader<string, string>(async keys => {
-            console.log(`loaderErnie-keys-🐹🐹🐹`, keys)
-            try {
-                const ernieAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchErnie(ctx, {
-                            ...ctx.loaderErnieArgs[key],
-                        })
+        ctx.loaderErnie = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderErnie-keys-🐹🐹🐹`, keys)
+                try {
+                    const ernieAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchErnie(ctx, {
+                                ...ctx.loaderErnieArgs[key],
+                            })
+                        )
                     )
-                )
-                return ernieAnswerList
-            } catch (e) {
-                console.log(`[loaderErnie] error: ${e}`)
+                    return ernieAnswerList
+                } catch (e) {
+                    console.log(`[loaderErnie] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderErnie
 }

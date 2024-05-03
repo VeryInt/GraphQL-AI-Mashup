@@ -152,22 +152,27 @@ const loaderZhipu = async (ctx: TBaseContext, args: ICommonDalArgs, key: string)
     }
 
     if (!ctx?.loaderZhipu) {
-        ctx.loaderZhipu = new DataLoader<string, string>(async keys => {
-            console.log(`loaderZhipu-keys-🐹🐹🐹`, keys)
-            try {
-                const zhipuAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchZhipu(ctx, {
-                            ...ctx.loaderZhipuArgs[key],
-                        })
+        ctx.loaderZhipu = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderZhipu-keys-🐹🐹🐹`, keys)
+                try {
+                    const zhipuAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchZhipu(ctx, {
+                                ...ctx.loaderZhipuArgs[key],
+                            })
+                        )
                     )
-                )
-                return zhipuAnswerList
-            } catch (e) {
-                console.log(`[loaderZhipu] error: ${e}`)
+                    return zhipuAnswerList
+                } catch (e) {
+                    console.log(`[loaderZhipu] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderZhipu
 }

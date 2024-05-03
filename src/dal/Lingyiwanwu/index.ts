@@ -108,22 +108,27 @@ const loaderLingyiwanwu = async (ctx: TBaseContext, args: ICommonDalArgs, key: s
     }
 
     if (!ctx?.loaderLingyiwanwu) {
-        ctx.loaderLingyiwanwu = new DataLoader<string, string>(async keys => {
-            console.log(`loaderLingyiwanwu-keys-🐹🐹🐹`, keys)
-            try {
-                const lingyiwanwuAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchLingyiwanwu(ctx, {
-                            ...ctx.loaderLingyiwanwuArgs[key],
-                        })
+        ctx.loaderLingyiwanwu = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderLingyiwanwu-keys-🐹🐹🐹`, keys)
+                try {
+                    const lingyiwanwuAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchLingyiwanwu(ctx, {
+                                ...ctx.loaderLingyiwanwuArgs[key],
+                            })
+                        )
                     )
-                )
-                return lingyiwanwuAnswerList
-            } catch (e) {
-                console.log(`[loaderLingyiwanwu] error: ${e}`)
+                    return lingyiwanwuAnswerList
+                } catch (e) {
+                    console.log(`[loaderLingyiwanwu] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderLingyiwanwu
 }

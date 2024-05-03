@@ -194,22 +194,27 @@ const loaderClaude = async (ctx: TBaseContext, args: ICommonDalArgs, key: string
     }
 
     if (!ctx?.loaderClaude) {
-        ctx.loaderClaude = new DataLoader<string, string>(async keys => {
-            console.log(`loaderClaude-keys-🐹🐹🐹`, keys)
-            try {
-                const geminiProAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchClaude(ctx, {
-                            ...ctx.loaderClaudeArgs[key],
-                        })
+        ctx.loaderClaude = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderClaude-keys-🐹🐹🐹`, keys)
+                try {
+                    const geminiProAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchClaude(ctx, {
+                                ...ctx.loaderClaudeArgs[key],
+                            })
+                        )
                     )
-                )
-                return geminiProAnswerList
-            } catch (e) {
-                console.log(`[loaderClaude] error: ${e}`)
+                    return geminiProAnswerList
+                } catch (e) {
+                    console.log(`[loaderClaude] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderClaude
 }

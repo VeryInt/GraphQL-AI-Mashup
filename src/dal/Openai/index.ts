@@ -161,22 +161,27 @@ const loaderOpenai = async (ctx: TBaseContext, args: IOpenaiArgs, key: string) =
     }
 
     if (!ctx?.loaderOpenai) {
-        ctx.loaderOpenai = new DataLoader<string, string>(async keys => {
-            console.log(`loaderOpenai-keys-🐹🐹🐹`, keys)
-            try {
-                const openaiAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchOpenai(ctx, {
-                            ...ctx.loaderOpenaiArgs[key],
-                        })
+        ctx.loaderOpenai = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderOpenai-keys-🐹🐹🐹`, keys)
+                try {
+                    const openaiAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchOpenai(ctx, {
+                                ...ctx.loaderOpenaiArgs[key],
+                            })
+                        )
                     )
-                )
-                return openaiAnswerList
-            } catch (e) {
-                console.log(`[loaderOpenai] error: ${e}`)
+                    return openaiAnswerList
+                } catch (e) {
+                    console.log(`[loaderOpenai] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderOpenai
 }

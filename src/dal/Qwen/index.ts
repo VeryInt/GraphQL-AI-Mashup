@@ -267,22 +267,27 @@ const loaderQwen = async (ctx: TBaseContext, args: ICommonDalArgs, key: string) 
     }
 
     if (!ctx?.loaderQwen) {
-        ctx.loaderQwen = new DataLoader<string, string>(async keys => {
-            console.log(`loaderQwen-keys-🐹🐹🐹`, keys)
-            try {
-                const qwenAnswerList = await Promise.all(
-                    keys.map(key =>
-                        fetchQwen(ctx, {
-                            ...ctx.loaderQwenArgs[key],
-                        })
+        ctx.loaderQwen = new DataLoader<string, string>(
+            async keys => {
+                console.log(`loaderQwen-keys-🐹🐹🐹`, keys)
+                try {
+                    const qwenAnswerList = await Promise.all(
+                        keys.map(key =>
+                            fetchQwen(ctx, {
+                                ...ctx.loaderQwenArgs[key],
+                            })
+                        )
                     )
-                )
-                return qwenAnswerList
-            } catch (e) {
-                console.log(`[loaderQwen] error: ${e}`)
+                    return qwenAnswerList
+                } catch (e) {
+                    console.log(`[loaderQwen] error: ${e}`)
+                }
+                return new Array(keys.length || 1).fill({ status: false })
+            },
+            {
+                batchScheduleFn: callback => setTimeout(callback, 100),
             }
-            return new Array(keys.length || 1).fill({ status: false })
-        })
+        )
     }
     return ctx.loaderQwen
 }
