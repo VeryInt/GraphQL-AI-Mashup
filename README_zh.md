@@ -11,9 +11,10 @@ GraphQL-AI-Mashup 是一个集成各种类型 AI 接口的应用程序,通过 Gr
 - 可一键部署到 Vercel
 
 ### AI支持列表
-|AI|默认模型|文档|是暂未支持联网|
+|AI|默认模型|Model 文档|是暂未支持联网|
 |--|--|--|--|
 |OpenAI|gpt-3.5-turbo|[Openai Models](https://platform.openai.com/docs/models)|暂未支持|
+|Cloudflare Workers AI|@cf/meta/llama-3-8b-instruct|[Workers AI Models](https://developers.cloudflare.com/workers-ai/models/)|暂未支持|
 |Azure OpenAI|gpt-3.5-turbo|[Azure Openai Models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)|是|
 |GeminiPro|gemini-1.0-pro-latest|[GeminiPro Models](https://ai.google.dev/models/gemini)|暂未|
 |Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|普通模式: 是<br />Stream: 暂未|

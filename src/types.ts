@@ -42,3 +42,7 @@ export interface IAzureOpenaiArgs extends ICommonDalArgs {
 export interface IOpenaiArgs extends ICommonDalArgs {
     baseUrl?: string
 }
+
+export interface IWorkersAIArgs extends ICommonDalArgs {
+    accountID?: string
+}

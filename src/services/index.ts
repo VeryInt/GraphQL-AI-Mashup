@@ -11,6 +11,7 @@ import Qwen from './Qwen'
 import Zhipu from './Zhipu'
 import Chain from './Chain'
 import AzureOpenai from './AzureOpenai'
+import WorkersAI from './WorkersAI'
 
 const serviceList = [
     Chain,
@@ -25,6 +26,7 @@ const serviceList = [
     Ernie,
     Qwen,
     Zhipu,
+    WorkersAI,
 ]
 
 export default {

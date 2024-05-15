@@ -15,6 +15,7 @@ New feature: Search the web in real time, by DuckDuckGo search engine.
 |AI|Default Model|Documentation|Search web in real time|
 |--|--|--|--|
 |OpenAI|gpt-3.5-turbo|[Openai Models](https://platform.openai.com/docs/models)|Not Yet|
+|Cloudflare Workers AI|@cf/meta/llama-3-8b-instruct|[Workers AI Models](https://developers.cloudflare.com/workers-ai/models/)|Not Yet|
 |Azure OpenAI|gpt-3.5-turbo|[Azure Openai Models](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models)|Yes|
 |GeminiPro|gemini-1.0-pro-latest|[GeminiPro Models](https://ai.google.dev/models/gemini)|Not Yet|
 |Claude|claude-3-haiku-20240307|[Claude Models](https://docs.anthropic.com/claude/docs/models-overview#model-recommendations)|Normal: Yes<br />Stream: No|
